@@ -1,33 +1,32 @@
-% Deleration of veriables
-char user_plaintext;
-hex_plaintext = [];
-hex_str = [];
+% Deleration of arrays
+hexPlaintext = [];
+hexChar = [];
 
-% setting the dialog box parameters
-dlg_task = "Enter plaintext:";
-dlg_title = "Plaintext dialog";
-dlg_dim = [20 100];
+% Setting the dialog box parameters
+dlgTask = "Enter plaintext:";
+dlgTitle = "Plaintext dialog";
+dlgDim = [20 100];
 
+% Request user input from dialog box and then converting cell to char to cell array
+userInput = inputdlg(dlgTask, dlgTitle, dlgDim);
+stringPlaintext = num2cell(char(userInput));
 
-user_input = inputdlg(dlg_task, dlg_title, dlg_dim);    % user input from dialog box
-string_plaintext = num2cell(char(user_input));          % converting cell to char to cell array
-
-for i = 1:length(string_plaintext)
-    hex_str = dec2hex(char(string_plaintext(i)));
-    hex_plaintext = [hex_plaintext; hex_str];
+% Converts ASCII to hex and stored in hexPlaintext array
+for i = 1:length(stringPlaintext)
+    hexChar = dec2hex(char(stringPlaintext(i)));
+    hexPlaintext = [hexPlaintext; hexChar];
 end
 
-%Adds 0x20 (hex space value) to hex_plaintext if value if below 16
-if length(hex_plaintext) < 16
-    for i = 1:16-length(hex_plaintext)
-        hex_plaintext = [hex_plaintext; "20"];
+% Adds 0x20 (hex space value) to hexPlaintext if array value is not a muilptiple of 16
+if length(hexPlaintext) < 16
+    for i = 1:16-length(hexPlaintext)
+        hexPlaintext = [hexPlaintext; "20"];
     end
-
-elseif mod(length(hex_plaintext),16) ~= 0
-    for i = 1:16-mod(length(hex_plaintext),16)
-        hex_plaintext = [hex_plaintext; "20"];
+elseif mod(length(hexPlaintext),16) ~= 0
+    for i = 1:16-mod(length(hexPlaintext),16)
+        hexPlaintext = [hexPlaintext; "20"];
     end
 end
 
-%Convert the hex_plaintext array to a matrix
-AES_block_input = reshape(hex_plaintext,16, length(hex_plaintext)/16)
+%Convert the hexPlaintext array to a matrix
+AESBlockInput = reshape(hexPlaintext,16, length(hexPlaintext)/16)
