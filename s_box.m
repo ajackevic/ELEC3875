@@ -28,5 +28,5 @@ function sBoxValue = s_box(inputHex)
 
      % Acquiring s-box value based on the row and column values
      % Plus 1 is required as hex values start from 0
-     sBoxValue = dec2hex(sBox(sBoxRow + 1, sBoxColumn + 1),2);
+     sBoxValue = string(dec2hex(sBox(sBoxRow + 1, sBoxColumn + 1),2));
 end

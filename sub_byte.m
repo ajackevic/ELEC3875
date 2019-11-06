@@ -5,6 +5,6 @@ function sBoxOutput = sub_byte(sBoxInput)
         % S-box substituting by proving the value to the s_box function
         sBoxValue = s_box(sBoxInput(i));
         % Adding the variable sBoxValue to the sBoxOutput array
-        sBoxOutput = [sBoxOutput ; string(sBoxValue)];
+        sBoxOutput = [sBoxOutput ; sBoxValue];
     end
 end
