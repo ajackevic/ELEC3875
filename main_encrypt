@@ -1,9 +1,16 @@
 hexData = user_input();
 hexDataSize = size(hexData,2);
 allKeys = key_creation();
-for i = 1:hexDataSize
-    roundKeyOutput = add_round_key(hexData(:,i),allKeys(i))
-    for rounds = 1:9
-
+for hexBlock = 1:hexDataSize
+    roundKeyOutput = add_round_key(hexData(:,hexBlock),allKeys(:,1));
+    for rounds = 2:10
+        subByteOutput = sub_byte(roundKeyOutput);
+        shiftRowOutput = shift_row(subByteOutput);
+        mixColumnOutput = mix_column(shiftRowOutput);
+        roundKeyOutput = add_round_key(mixColumnOutput,allKeys(:,rounds));
     end
+    subByteOutput = sub_byte(roundKeyOutput);
+    shiftRowOutput = shift_row(subByteOutput);
+    roundKeyOutput = add_round_key(shiftRowOutput, allKeys(:,11));
+    AESEncrypt = roundKeyOutput;
 end
