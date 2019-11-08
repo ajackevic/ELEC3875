@@ -1,0 +1,9 @@
+hexData = user_input();
+hexDataSize = size(hexData,2);
+allKeys = key_creation();
+for i = 1:hexDataSize
+    roundKeyOutput = add_round_key(hexData(:,i),allKeys(i))
+    for rounds = 1:9
+
+    end
+end
