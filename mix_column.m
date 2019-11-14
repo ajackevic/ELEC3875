@@ -34,4 +34,5 @@ function outputArray = mix_column(inputArray)
                        );
         outputArray = [outputArray; dec2hex(row_01,2); dec2hex(row_02,2); dec2hex(row_03,2); dec2hex(row_04,2)];
     end
+    outputArray = string(outputArray);
 end
