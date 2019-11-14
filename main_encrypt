@@ -1,4 +1,17 @@
 % This script calls all the different steps/functions that are required by AES for encryption
+
+%{
+  AES proccess:
+    1)KeyExpansion
+    2)AddRoundKey
+    3)SubBytes     ---
+      ShiftRows       | Repeat this proccess for x9, x11, x13 time
+      MixColumns      |  Depends on AES bit length
+      AddRoundKey  ---
+    4)SubBytes
+      ShiftRows
+      AddRoundKey
+%}
 AESEncrypt = [];
 % Call the function user_input and acquire the user data
 hexData = user_input();
@@ -19,16 +32,4 @@ for hexBlock = 1:hexDataSize
     roundKeyOutput = add_round_key(shiftRowOutput, allKeys(:,11));
     AESEncrypt = [AESEncrypt ; roundKeyOutput];
 end
-
-%{
-  AES proccess:
-    1)KeyExpansion
-    2)AddRoundKey
-    3)SubBytes     ---
-      ShiftRows       | Repeat this proccess for x9, x11, x13 time
-      MixColumns      |  Depends on AES bit length
-      AddRoundKey  ---
-    4)SubBytes
-      ShiftRows
-      AddRoundKey
-%}
+AESEncrypt = AES_format(AESEncrypt)
