@@ -31,4 +31,5 @@ function hexBlockOutput = user_input()
 
     % Convert the hexPlaintext array to a matrix
     hexBlockOutput = reshape(hexPlaintext,16, length(hexPlaintext)/16);
+    hexBlockOutput = string(hexBlockOutput);
 end
