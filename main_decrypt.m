@@ -19,5 +19,11 @@ allKeys = key_creation();
 cipherInput = user_input_decrypt();
 blockSize = size(cipherInput,2);
 for cipherBlock = 1:blockSize
+    roundKeyOutput = add_round_key(cipherInput(:,cipherBlock),allKeys(:,11));
+    invShiftRowOutput = inv_shift_row(roundKeyOutput);
+    InvSubByteOutput = inv_sub_byte(invShiftRowOutput);
+    for rounds = 10:-1:2
 
+
+    end
 end
