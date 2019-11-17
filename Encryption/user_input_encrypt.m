@@ -8,7 +8,7 @@ function hexBlockOutput = user_input()
 
     % Setting the dialog box parameters
     dlgTask = "Enter plaintext:";
-    dlgTitle = "Plaintext dialog";
+    dlgTitle = "Encryption dialog";
     dlgDim = [20 100];
 
     % Request user input from dialog box and then converting cell to char to cell array
@@ -20,16 +20,16 @@ function hexBlockOutput = user_input()
         hexChar = dec2hex(char(stringPlaintext(i)));
         hexPlaintext = [hexPlaintext; hexChar];
     end
-    
-    % Adds 0x20 (hex space value) to hexPlaintext if array value is not a muilptiple of 16
+
+    % Adds 0x00 (null value) to hexPlaintext if array value is not a muilptiple of 16
     if length(hexPlaintext) <= 16
         hexBlockOutput = hexPlaintext;
         for i = 1:16-length(hexPlaintext)
-            hexBlockOutput = [hexBlockOutput; "20"];
+            hexBlockOutput = [hexBlockOutput; "00"];
         end
     elseif mod(length(hexPlaintext),16) ~= 0
         for i = 1:16-mod(length(hexPlaintext),16)
-            hexPlaintext = [hexPlaintext; "20"];
+            hexPlaintext = [hexPlaintext; "00"];
         end
         % Convert the hexPlaintext array to a matrix
         hexBlockOutput = reshape(hexPlaintext,16, length(hexPlaintext)/16);
