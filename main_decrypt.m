@@ -1,4 +1,4 @@
-function plaintext = main_decrypt(userData)
+function plaintext = main_decrypt(userData, inputKey, keyType)
     % This script calls all the different steps/functions that are required by AES for decryption
     %{
       AES proccess:
@@ -15,7 +15,7 @@ function plaintext = main_decrypt(userData)
     %}
     plaintext = [];
     % Call key creation function and format userData
-    allKeys = key_creation("encrypt");
+    allKeys = key_creation(inputKey, keyType);
     cipherInput = format_decrypt_in(userData);
     blockSize = size(cipherInput,2);
     for cipherBlock = 1:blockSize

@@ -2,18 +2,20 @@ classdef GUI < matlab.apps.AppBase
 
     % Properties that correspond to app components
     properties (Access = public)
-        AES_Encryption        matlab.ui.Figure
-        AESENCRYPTIONLabel    matlab.ui.control.Label
-        KeyTextAreaLabel      matlab.ui.control.Label
-        KeyTextArea           matlab.ui.control.TextArea
-        DataTextAreaLabel     matlab.ui.control.Label
-        DataTextArea          matlab.ui.control.TextArea
-        AESModeDropDownLabel  matlab.ui.control.Label
-        AESModeDropDown       matlab.ui.control.DropDown
-        AESTypeDropDownLabel  matlab.ui.control.Label
-        AESTypeDropDown       matlab.ui.control.DropDown
-        EncryptButton         matlab.ui.control.Button
-        DecryptButton         matlab.ui.control.Button
+        AES_Encryption          matlab.ui.Figure
+        AESENCRYPTIONLabel      matlab.ui.control.Label
+        DataTextAreaLabel       matlab.ui.control.Label
+        DataTextArea            matlab.ui.control.TextArea
+        KeyTextAreaLabel        matlab.ui.control.Label
+        KeyTextArea             matlab.ui.control.TextArea
+        AESModeDropDownLabel    matlab.ui.control.Label
+        AESModeDropDown         matlab.ui.control.DropDown
+        AESTypeDropDownLabel    matlab.ui.control.Label
+        AESTypeDropDown         matlab.ui.control.DropDown
+        EncryptButton           matlab.ui.control.Button
+        DecryptButton           matlab.ui.control.Button
+        KeyformatDropDownLabel  matlab.ui.control.Label
+        KeyformatDropDown       matlab.ui.control.DropDown
     end
 
     % Callbacks that handle component events
@@ -22,14 +24,18 @@ classdef GUI < matlab.apps.AppBase
         % Button pushed function: EncryptButton
         function EncryptButtonPushed(app, event)
             userData = app.DataTextArea.Value;
-            cipher = main_encrypt(userData);
+            keyInput = app.KeyTextArea.Value;
+            keyType = app.KeyformatDropDown.Value;
+            cipher = main_encrypt(userData, keyInput, keyType);
             app.DataTextArea.Value = cipher;
         end
 
         % Button pushed function: DecryptButton
         function DecryptButtonPushed(app, event)
             userData = app.DataTextArea.Value;
-            plainttext = main_decrypt(userData);
+            keyInput = app.KeyTextArea.Value;
+            keyType = app.KeyformatDropDown.Value;
+            plainttext = main_decrypt(userData, keyInput, keyType);
             app.DataTextArea.Value = plainttext;
         end
     end
@@ -44,7 +50,7 @@ classdef GUI < matlab.apps.AppBase
             app.AES_Encryption = uifigure('Visible', 'off');
             app.AES_Encryption.Color = [1 1 1];
             app.AES_Encryption.Position = [100 100 640 480];
-            app.AES_Encryption.Name = 'UI Figure';
+            app.AES_Encryption.Name = 'AES Encryption';
 
             % Create AESENCRYPTIONLabel
             app.AESENCRYPTIONLabel = uilabel(app.AES_Encryption);
@@ -77,26 +83,26 @@ classdef GUI < matlab.apps.AppBase
             % Create AESModeDropDownLabel
             app.AESModeDropDownLabel = uilabel(app.AES_Encryption);
             app.AESModeDropDownLabel.HorizontalAlignment = 'right';
-            app.AESModeDropDownLabel.Position = [21 109 63 22];
+            app.AESModeDropDownLabel.Position = [258 109 63 22];
             app.AESModeDropDownLabel.Text = 'AES Mode';
 
             % Create AESModeDropDown
             app.AESModeDropDown = uidropdown(app.AES_Encryption);
             app.AESModeDropDown.Items = {'128-bit', '192-bit', '256-bit'};
-            app.AESModeDropDown.Position = [99 109 100 22];
+            app.AESModeDropDown.Position = [336 109 100 22];
             app.AESModeDropDown.Value = '128-bit';
 
             % Create AESTypeDropDownLabel
             app.AESTypeDropDownLabel = uilabel(app.AES_Encryption);
             app.AESTypeDropDownLabel.HorizontalAlignment = 'right';
-            app.AESTypeDropDownLabel.Position = [415 109 59 22];
+            app.AESTypeDropDownLabel.Position = [457 109 59 22];
             app.AESTypeDropDownLabel.Text = 'AES Type';
 
             % Create AESTypeDropDown
             app.AESTypeDropDown = uidropdown(app.AES_Encryption);
-            app.AESTypeDropDown.Items = {'CBC'};
-            app.AESTypeDropDown.Position = [489 109 100 22];
-            app.AESTypeDropDown.Value = 'CBC';
+            app.AESTypeDropDown.Items = {'EBC'};
+            app.AESTypeDropDown.Position = [531 109 100 22];
+            app.AESTypeDropDown.Value = 'EBC';
 
             % Create EncryptButton
             app.EncryptButton = uibutton(app.AES_Encryption, 'push');
@@ -117,6 +123,18 @@ classdef GUI < matlab.apps.AppBase
             app.DecryptButton.FontWeight = 'bold';
             app.DecryptButton.Position = [351 38 100 33];
             app.DecryptButton.Text = 'Decrypt';
+
+            % Create KeyformatDropDownLabel
+            app.KeyformatDropDownLabel = uilabel(app.AES_Encryption);
+            app.KeyformatDropDownLabel.HorizontalAlignment = 'right';
+            app.KeyformatDropDownLabel.Position = [13 107 66 23];
+            app.KeyformatDropDownLabel.Text = 'Key format';
+
+            % Create KeyformatDropDown
+            app.KeyformatDropDown = uidropdown(app.AES_Encryption);
+            app.KeyformatDropDown.Items = {'Plaintext', 'Hex'};
+            app.KeyformatDropDown.Position = [94 108 139 22];
+            app.KeyformatDropDown.Value = 'Plaintext';
 
             % Show the figure after all components are created
             app.AES_Encryption.Visible = 'on';
