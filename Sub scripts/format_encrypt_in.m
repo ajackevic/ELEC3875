@@ -1,5 +1,5 @@
 % This function acquires user input and format it into hex 16 byte blocks
-function hexBlockOutput = user_input(userData)
+function hexBlockOutput = format_encrypt_in(userData)
     hexPlaintext = [];
     hexChar = [];
 

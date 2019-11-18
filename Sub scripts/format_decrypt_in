@@ -1,4 +1,4 @@
-function cipherBlockOutput = user_input_decrypt(userData)
+function cipherBlockOutput = format_decrypt_in(userData)
     cipherArray = AES_format(char(userData));
 
     % Reshape the string array to a 16 block matrix

@@ -13,7 +13,7 @@ function cipher = main_encrypt(userData)
           AddRoundKey
     %}
     cipher = [];
-    hexData = user_input_encrypt(userData);
+    hexData = format_encrypt_in(userData);
     hexDataSize = size(hexData,2);
     % Call the function key_creation and acquire all the round keys
     allKeys = key_creation("encrypt");

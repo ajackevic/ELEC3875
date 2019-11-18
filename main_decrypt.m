@@ -16,7 +16,7 @@ function plaintext = main_decrypt(userData)
     plaintext = [];
     % Call key creation function and format userData
     allKeys = key_creation("encrypt");
-    cipherInput = user_input_decrypt(userData);
+    cipherInput = format_decrypt_in(userData);
     blockSize = size(cipherInput,2);
     for cipherBlock = 1:blockSize
         roundKeyOutput = add_round_key(cipherInput(:,cipherBlock),allKeys(:,11));
