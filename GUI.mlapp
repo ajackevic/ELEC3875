@@ -21,12 +21,16 @@ classdef GUI < matlab.apps.AppBase
 
         % Button pushed function: EncryptButton
         function EncryptButtonPushed(app, event)
-            main_encrypt(userData);
+            userData = app.DataTextArea.Value;
+            cipher = main_encrypt(userData);
+            app.DataTextArea.Value = cipher;
         end
 
         % Button pushed function: DecryptButton
         function DecryptButtonPushed(app, event)
-            main_decrypt()
+            userData = app.DataTextArea.Value;
+            plainttext = main_decrypt(userData);
+            app.DataTextArea.Value = plainttext;
         end
     end
 

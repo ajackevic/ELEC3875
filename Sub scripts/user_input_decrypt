@@ -1,13 +1,5 @@
-function cipherBlockOutput = user_input_decrypt()
-    % Setting the dialog box parameters
-    dlgTask = "Enter cipher:";
-    dlgTitle = "Decryption dialog";
-    dlgDim = [20 100];
-
-    % Request user input from dialog box and then format it in to
-    % two byte hex string array
-    userInput = inputdlg(dlgTask, dlgTitle, dlgDim);
-    cipherArray = AES_format(char(userInput));
+function cipherBlockOutput = user_input_decrypt(userData)
+    cipherArray = AES_format(char(userData));
 
     % Reshape the string array to a 16 block matrix
     if length(cipherArray) == 16

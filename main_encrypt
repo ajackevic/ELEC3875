@@ -1,35 +1,35 @@
 % This script calls all the different steps/functions that are required by AES for encryption
-
-%{
-  AES proccess:
-    1)KeyExpansion
-    2)AddRoundKey
-    3)SubBytes     ---
-      ShiftRows       | Repeat this proccess for x9, x11, x13 time
-      MixColumns      |  Depends on AES bit length
-      AddRoundKey  ---
-    4)SubBytes
-      ShiftRows
-      AddRoundKey
-%}
-AESEncrypt = [];
-% Call the function user_input and acquire the user data
-hexData = user_input_encrypt();
-hexDataSize = size(hexData,2);
-% Call the function key_creation and acquire all the round keys
-allKeys = key_creation("encrypt");
-% Repeat the AES process for the amount of 16 byte blocks in hexData
-for hexBlock = 1:hexDataSize
-    roundKeyOutput = add_round_key(hexData(:,hexBlock),allKeys(:,1));
-    for rounds = 2:10
+function cipher = main_encrypt(userData)
+    %{
+      AES proccess:
+        1)KeyExpansion
+        2)AddRoundKey
+        3)SubBytes     ---
+          ShiftRows       | Repeat this proccess for x9, x11, x13 time
+          MixColumns      |  Depends on AES bit length
+          AddRoundKey  ---
+        4)SubBytes
+          ShiftRows
+          AddRoundKey
+    %}
+    cipher = [];
+    hexData = user_input_encrypt(userData);
+    hexDataSize = size(hexData,2);
+    % Call the function key_creation and acquire all the round keys
+    allKeys = key_creation("encrypt");
+    % Repeat the AES process for the amount of 16 byte blocks in hexData
+    for hexBlock = 1:hexDataSize
+        roundKeyOutput = add_round_key(hexData(:,hexBlock),allKeys(:,1));
+        for rounds = 2:10
+            subByteOutput = sub_byte(roundKeyOutput, "encrypt");
+            shiftRowOutput = shift_row(subByteOutput, "encrypt");
+            mixColumnOutput = mix_column(shiftRowOutput, "encrypt");
+            roundKeyOutput = add_round_key(mixColumnOutput,allKeys(:,rounds));
+        end
         subByteOutput = sub_byte(roundKeyOutput, "encrypt");
         shiftRowOutput = shift_row(subByteOutput, "encrypt");
-        mixColumnOutput = mix_column(shiftRowOutput, "encrypt");
-        roundKeyOutput = add_round_key(mixColumnOutput,allKeys(:,rounds));
+        roundKeyOutput = add_round_key(shiftRowOutput, allKeys(:,11));
+        cipher = [cipher ; roundKeyOutput];
     end
-    subByteOutput = sub_byte(roundKeyOutput, "encrypt");
-    shiftRowOutput = shift_row(subByteOutput, "encrypt");
-    roundKeyOutput = add_round_key(shiftRowOutput, allKeys(:,11));
-    AESEncrypt = [AESEncrypt ; roundKeyOutput];
+    cipher = AES_format(cipher);
 end
-AESEncrypt = AES_format(AESEncrypt)
