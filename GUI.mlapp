@@ -26,8 +26,14 @@ classdef GUI < matlab.apps.AppBase
             userData = app.DataTextArea.Value;
             keyInput = app.KeyTextArea.Value;
             keyType = app.KeyformatDropDown.Value;
-            cipher = main_encrypt(userData, keyInput, keyType);
-            app.DataTextArea.Value = cipher;
+            % Raise error dialog box if entered key is invalid
+            if key_check(keyInput, keyType)
+                msgbox(["    Invalid entered key. Check entered key";
+                        "and whether the correct key format is selected."], "Invalid key");
+            else
+                cipher = main_encrypt(userData, keyInput, keyType);
+                app.DataTextArea.Value = cipher;
+            end
         end
 
         % Button pushed function: DecryptButton
@@ -35,8 +41,19 @@ classdef GUI < matlab.apps.AppBase
             userData = app.DataTextArea.Value;
             keyInput = app.KeyTextArea.Value;
             keyType = app.KeyformatDropDown.Value;
-            plainttext = main_decrypt(userData, keyInput, keyType);
-            app.DataTextArea.Value = plainttext;
+            % Raise error dialog box if entered key is invalid
+            if key_check(keyInput, keyType)
+                msgbox(["    Invalid entered key. Check entered key";
+                        "and whether the correct key format is selected."], "Invalid key");
+            else
+                plainttext = main_decrypt(userData, keyInput, keyType);
+                app.DataTextArea.Value = plainttext;
+            end
+        end
+
+        % Value changed function: KeyTextArea
+        function KeyTextAreaValueChanged(app, event)
+
         end
     end
 
@@ -48,60 +65,65 @@ classdef GUI < matlab.apps.AppBase
 
             % Create AES_Encryption and hide until all components are created
             app.AES_Encryption = uifigure('Visible', 'off');
+            app.AES_Encryption.AutoResizeChildren = 'off';
             app.AES_Encryption.Color = [1 1 1];
-            app.AES_Encryption.Position = [100 100 640 480];
+            app.AES_Encryption.Position = [100 100 765 487];
             app.AES_Encryption.Name = 'AES Encryption';
+            app.AES_Encryption.Resize = 'off';
+            app.AES_Encryption.Scrollable = 'on';
 
             % Create AESENCRYPTIONLabel
             app.AESENCRYPTIONLabel = uilabel(app.AES_Encryption);
             app.AESENCRYPTIONLabel.FontName = 'Lucida Bright';
             app.AESENCRYPTIONLabel.FontSize = 40;
             app.AESENCRYPTIONLabel.FontWeight = 'bold';
-            app.AESENCRYPTIONLabel.Position = [139 391 375 63];
+            app.AESENCRYPTIONLabel.Position = [188 392 375 63];
             app.AESENCRYPTIONLabel.Text = 'AES ENCRYPTION';
 
             % Create DataTextAreaLabel
             app.DataTextAreaLabel = uilabel(app.AES_Encryption);
             app.DataTextAreaLabel.HorizontalAlignment = 'center';
-            app.DataTextAreaLabel.Position = [13.5 337 31 22];
+            app.DataTextAreaLabel.Position = [63 338 31 22];
             app.DataTextAreaLabel.Text = 'Data';
 
             % Create DataTextArea
             app.DataTextArea = uitextarea(app.AES_Encryption);
-            app.DataTextArea.Position = [62 191 569 170];
+            app.DataTextArea.Position = [111 192 569 170];
 
             % Create KeyTextAreaLabel
             app.KeyTextAreaLabel = uilabel(app.AES_Encryption);
             app.KeyTextAreaLabel.HorizontalAlignment = 'center';
-            app.KeyTextAreaLabel.Position = [20 149 26 22];
+            app.KeyTextAreaLabel.Position = [63 150 26 22];
             app.KeyTextAreaLabel.Text = 'Key';
 
             % Create KeyTextArea
             app.KeyTextArea = uitextarea(app.AES_Encryption);
-            app.KeyTextArea.Position = [61 151 570 20];
+            app.KeyTextArea.ValueChangedFcn = createCallbackFcn(app, @KeyTextAreaValueChanged, true);
+            app.KeyTextArea.Tooltip = {'Exmaples:'; ''; 'Plaintext:Thats my Kung Fu'; ''; 'Hex:546861747'; '3206D79204B7'; '56E67204675'};
+            app.KeyTextArea.Position = [110 152 576 20];
 
             % Create AESModeDropDownLabel
             app.AESModeDropDownLabel = uilabel(app.AES_Encryption);
             app.AESModeDropDownLabel.HorizontalAlignment = 'right';
-            app.AESModeDropDownLabel.Position = [258 109 63 22];
+            app.AESModeDropDownLabel.Position = [307 110 63 22];
             app.AESModeDropDownLabel.Text = 'AES Mode';
 
             % Create AESModeDropDown
             app.AESModeDropDown = uidropdown(app.AES_Encryption);
-            app.AESModeDropDown.Items = {'128-bit', '192-bit', '256-bit'};
-            app.AESModeDropDown.Position = [336 109 100 22];
+            app.AESModeDropDown.Items = {'128-bit', ''};
+            app.AESModeDropDown.Position = [385 110 100 22];
             app.AESModeDropDown.Value = '128-bit';
 
             % Create AESTypeDropDownLabel
             app.AESTypeDropDownLabel = uilabel(app.AES_Encryption);
             app.AESTypeDropDownLabel.HorizontalAlignment = 'right';
-            app.AESTypeDropDownLabel.Position = [457 109 59 22];
+            app.AESTypeDropDownLabel.Position = [506 110 59 22];
             app.AESTypeDropDownLabel.Text = 'AES Type';
 
             % Create AESTypeDropDown
             app.AESTypeDropDown = uidropdown(app.AES_Encryption);
             app.AESTypeDropDown.Items = {'EBC'};
-            app.AESTypeDropDown.Position = [531 109 100 22];
+            app.AESTypeDropDown.Position = [580 110 100 22];
             app.AESTypeDropDown.Value = 'EBC';
 
             % Create EncryptButton
@@ -111,7 +133,7 @@ classdef GUI < matlab.apps.AppBase
             app.EncryptButton.FontName = 'Lucida Bright';
             app.EncryptButton.FontSize = 20;
             app.EncryptButton.FontWeight = 'bold';
-            app.EncryptButton.Position = [191 38 100 33];
+            app.EncryptButton.Position = [240 39 100 33];
             app.EncryptButton.Text = 'Encrypt';
 
             % Create DecryptButton
@@ -121,19 +143,19 @@ classdef GUI < matlab.apps.AppBase
             app.DecryptButton.FontName = 'Lucida Bright';
             app.DecryptButton.FontSize = 20;
             app.DecryptButton.FontWeight = 'bold';
-            app.DecryptButton.Position = [351 38 100 33];
+            app.DecryptButton.Position = [400 39 100 33];
             app.DecryptButton.Text = 'Decrypt';
 
             % Create KeyformatDropDownLabel
             app.KeyformatDropDownLabel = uilabel(app.AES_Encryption);
             app.KeyformatDropDownLabel.HorizontalAlignment = 'right';
-            app.KeyformatDropDownLabel.Position = [13 107 66 23];
+            app.KeyformatDropDownLabel.Position = [62 108 66 23];
             app.KeyformatDropDownLabel.Text = 'Key format';
 
             % Create KeyformatDropDown
             app.KeyformatDropDown = uidropdown(app.AES_Encryption);
             app.KeyformatDropDown.Items = {'Plaintext', 'Hex'};
-            app.KeyformatDropDown.Position = [94 108 139 22];
+            app.KeyformatDropDown.Position = [143 109 139 22];
             app.KeyformatDropDown.Value = 'Plaintext';
 
             % Show the figure after all components are created

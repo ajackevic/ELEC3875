@@ -1,9 +1,7 @@
 % This function creates 10 different round keys from the supplied original key
 function roundKeys = key_creation(inputKey, keyType)
 
-    % Thats my Kung Fu
     AESKey = key_format(inputKey, keyType);
-
     Rcon = ["01"; "02"; "04"; "08"; "10"; "20"; "40"; "80"; "1B"; "36"];
     allKeys = AESKey;
 
@@ -37,13 +35,10 @@ function roundKeys = key_creation(inputKey, keyType)
                             bitxor(threePosDown(3), lastColumn(3)); bitxor(threePosDown(4), lastColumn(4)); ...
                             ];
             end
-
             columnKey = string(dec2hex(newColumn,2));
             allKeys = [allKeys; columnKey];
-
         end
     end
     % Convert the allKeys array to into a readable and usable format
     roundKeys = reshape(allKeys,16, length(allKeys)/16);
-
 end
