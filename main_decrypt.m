@@ -1,4 +1,4 @@
-function plaintext = main_decrypt(userData, inputKey, keyType)
+function plaintext = main_decrypt(userData, inputKey, keyType, AESMode)
     % This script calls all the different steps/functions that are required by AES for decryption
     %{
       AES proccess:
@@ -15,14 +15,20 @@ function plaintext = main_decrypt(userData, inputKey, keyType)
     %}
     plaintext = [];
     % Call key creation function and format userData
-    allKeys = key_creation(inputKey, keyType);
+    allKeys = key_creation(inputKey, keyType, AESMode);
     cipherInput = format_decrypt_in(userData);
     blockSize = size(cipherInput,2);
+    if AESMode == "128-bit"
+        numbRounds = 10;
+    end
+    if AESMode == "192-bit"
+        numbRounds = 12;
+    end
     for cipherBlock = 1:blockSize
-        roundKeyOutput = add_round_key(cipherInput(:,cipherBlock),allKeys(:,11));
+        roundKeyOutput = add_round_key(cipherInput(:,cipherBlock),allKeys(:,numbRounds+1));
         invShiftRowOutput = shift_row(roundKeyOutput, "decrypt");
         invSubByteOutput = sub_byte(invShiftRowOutput, "decrypt");
-        for rounds = 10:-1:2
+        for rounds = numbRounds:-1:2
             roundKeyOutput = add_round_key(invSubByteOutput,allKeys(:,rounds));
             invMixColumnOutput = mix_column(roundKeyOutput, "decrypt");
             invShiftRowOutput = shift_row(invMixColumnOutput, "decrypt");
