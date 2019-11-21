@@ -1,27 +1,15 @@
-% Should add a condition that decides what happens if user does
-% enter anything or if he closes the dialog box
-
 % This function acquires user input and format it into hex 16 byte blocks
-function hexBlockOutput = user_input()
+function hexBlockOutput = format_encrypt_in(userData)
     hexPlaintext = [];
     hexChar = [];
 
-    % Setting the dialog box parameters
-    dlgTask = "Enter plaintext:";
-    dlgTitle = "Encryption dialog";
-    dlgDim = [20 100];
-
-    % Request user input from dialog box and then converting cell to char to cell array
-    userInput = inputdlg(dlgTask, dlgTitle, dlgDim);
-    stringPlaintext = num2cell(char(userInput));
-
     % Converts ASCII to hex and stored in hexPlaintext array
-    for i = 1:length(stringPlaintext)
-        hexChar = dec2hex(char(stringPlaintext(i)));
+    for i = 1:length(userData)
+        hexChar = dec2hex(char(userData(i)));
         hexPlaintext = [hexPlaintext; hexChar];
     end
 
-    % Adds 0x00 (null value) to hexPlaintext if array value is not a muilptiple of 16
+    % Adds 0x20 (hex space value) to hexPlaintext if array value is not a muilptiple of 16
     if length(hexPlaintext) <= 16
         hexBlockOutput = hexPlaintext;
         for i = 1:16-length(hexPlaintext)

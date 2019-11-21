@@ -1,7 +1,7 @@
 % This function creates 10 different round keys from the supplied original key
-function roundKeys = key_creation()
+function roundKeys = key_creation(inputKey, keyType)
 
-    AESKey = ["54"; "68"; "61"; "74"; "73"; "20"; "6D"; "79"; "20"; "4B"; "75"; "6E"; "67"; "20"; "46"; "75"];
+    AESKey = key_format(inputKey, keyType);
     Rcon = ["01"; "02"; "04"; "08"; "10"; "20"; "40"; "80"; "1B"; "36"];
     allKeys = AESKey;
 
@@ -16,8 +16,8 @@ function roundKeys = key_creation()
                 % Do the following if this is the first column of the key
                 % Shift the values to the left by one and s-box substitution
                 shiftSub = hex2dec([ ...
-                                    s_box(lastColumn(2)); s_box(lastColumn(3)); ...
-                                    s_box(lastColumn(4)); s_box(lastColumn(1)); ...
+                                    s_box(lastColumn(2), "encrypt"); s_box(lastColumn(3), "encrypt"); ...
+                                    s_box(lastColumn(4), "encrypt"); s_box(lastColumn(1), "encrypt"); ...
                                    ]);
                 newColumn = [...
                           bitxor(threePosDown(1), shiftSub(1)); bitxor(threePosDown(2), shiftSub(2)); ...
@@ -26,20 +26,17 @@ function roundKeys = key_creation()
 
                 % XOR first value of newColumn with Rcon
                 newColumn(1) = bitxor(newColumn(1),hex2dec(Rcon(rounds)));
-                RconCounter = RconCounter + 1;
 
             else
                 % Convert hex to dec for the XOR operation between threePosDown array and lastColumn array
                 lastColumn = hex2dec(lastColumn);
                 newColumn = [...
-                          bitxor(threePosDown(1), lastColumn(1)); bitxor(threePosDown(2), lastColumn(2)); ...
-                          bitxor(threePosDown(3), lastColumn(3)); bitxor(threePosDown(4), lastColumn(4)); ...
-                         ];
+                            bitxor(threePosDown(1), lastColumn(1)); bitxor(threePosDown(2), lastColumn(2)); ...
+                            bitxor(threePosDown(3), lastColumn(3)); bitxor(threePosDown(4), lastColumn(4)); ...
+                            ];
             end
-
             columnKey = string(dec2hex(newColumn,2));
             allKeys = [allKeys; columnKey];
-
         end
     end
     % Convert the allKeys array to into a readable and usable format

@@ -1,0 +1,10 @@
+function cipherBlockOutput = format_decrypt_in(userData)
+    cipherArray = AES_format(char(userData));
+
+    % Reshape the string array to a 16 block matrix
+    if length(cipherArray) == 16
+        cipherBlockOutput = cipherArray;
+    else
+        cipherBlockOutput = reshape(cipherArray,16, length(cipherArray)/16);
+    end
+end

@@ -1,0 +1,190 @@
+classdef GUI < matlab.apps.AppBase
+
+    % Properties that correspond to app components
+    properties (Access = public)
+        AES_Encryption          matlab.ui.Figure
+        AESENCRYPTIONLabel      matlab.ui.control.Label
+        DataTextAreaLabel       matlab.ui.control.Label
+        DataTextArea            matlab.ui.control.TextArea
+        KeyTextAreaLabel        matlab.ui.control.Label
+        KeyTextArea             matlab.ui.control.TextArea
+        AESModeDropDownLabel    matlab.ui.control.Label
+        AESModeDropDown         matlab.ui.control.DropDown
+        AESTypeDropDownLabel    matlab.ui.control.Label
+        AESTypeDropDown         matlab.ui.control.DropDown
+        EncryptButton           matlab.ui.control.Button
+        DecryptButton           matlab.ui.control.Button
+        KeyformatDropDownLabel  matlab.ui.control.Label
+        KeyformatDropDown       matlab.ui.control.DropDown
+    end
+
+    % Callbacks that handle component events
+    methods (Access = private)
+
+        % Button pushed function: EncryptButton
+        function EncryptButtonPushed(app, event)
+            userData = app.DataTextArea.Value;
+            keyInput = app.KeyTextArea.Value;
+            keyType = app.KeyformatDropDown.Value;
+            % Raise error dialog box if entered key is invalid
+            if key_check(keyInput, keyType)
+                msgbox(["    Invalid entered key. Check entered key";
+                        "and whether the correct key format is selected."], "Invalid key");
+            else
+                cipher = main_encrypt(userData, keyInput, keyType);
+                app.DataTextArea.Value = cipher;
+            end
+        end
+
+        % Button pushed function: DecryptButton
+        function DecryptButtonPushed(app, event)
+            userData = app.DataTextArea.Value;
+            keyInput = app.KeyTextArea.Value;
+            keyType = app.KeyformatDropDown.Value;
+            % Raise error dialog box if entered key is invalid
+            if key_check(keyInput, keyType)
+                msgbox(["    Invalid entered key. Check entered key";
+                        "and whether the correct key format is selected."], "Invalid key");
+            else
+                plainttext = main_decrypt(userData, keyInput, keyType);
+                app.DataTextArea.Value = plainttext;
+            end
+        end
+
+        % Value changed function: KeyTextArea
+        function KeyTextAreaValueChanged(app, event)
+
+        end
+    end
+
+    % Component initialization
+    methods (Access = private)
+
+        % Create UIFigure and components
+        function createComponents(app)
+
+            % Create AES_Encryption and hide until all components are created
+            app.AES_Encryption = uifigure('Visible', 'off');
+            app.AES_Encryption.AutoResizeChildren = 'off';
+            app.AES_Encryption.Color = [1 1 1];
+            app.AES_Encryption.Position = [100 100 765 487];
+            app.AES_Encryption.Name = 'AES Encryption';
+            app.AES_Encryption.Resize = 'off';
+            app.AES_Encryption.Scrollable = 'on';
+
+            % Create AESENCRYPTIONLabel
+            app.AESENCRYPTIONLabel = uilabel(app.AES_Encryption);
+            app.AESENCRYPTIONLabel.FontName = 'Lucida Bright';
+            app.AESENCRYPTIONLabel.FontSize = 40;
+            app.AESENCRYPTIONLabel.FontWeight = 'bold';
+            app.AESENCRYPTIONLabel.Position = [188 392 375 63];
+            app.AESENCRYPTIONLabel.Text = 'AES ENCRYPTION';
+
+            % Create DataTextAreaLabel
+            app.DataTextAreaLabel = uilabel(app.AES_Encryption);
+            app.DataTextAreaLabel.HorizontalAlignment = 'center';
+            app.DataTextAreaLabel.Position = [63 338 31 22];
+            app.DataTextAreaLabel.Text = 'Data';
+
+            % Create DataTextArea
+            app.DataTextArea = uitextarea(app.AES_Encryption);
+            app.DataTextArea.Position = [111 192 569 170];
+
+            % Create KeyTextAreaLabel
+            app.KeyTextAreaLabel = uilabel(app.AES_Encryption);
+            app.KeyTextAreaLabel.HorizontalAlignment = 'center';
+            app.KeyTextAreaLabel.Position = [63 150 26 22];
+            app.KeyTextAreaLabel.Text = 'Key';
+
+            % Create KeyTextArea
+            app.KeyTextArea = uitextarea(app.AES_Encryption);
+            app.KeyTextArea.ValueChangedFcn = createCallbackFcn(app, @KeyTextAreaValueChanged, true);
+            app.KeyTextArea.Tooltip = {'Exmaples:'; ''; 'Plaintext:Thats my Kung Fu'; ''; 'Hex:546861747'; '3206D79204B7'; '56E67204675'};
+            app.KeyTextArea.Position = [110 152 576 20];
+
+            % Create AESModeDropDownLabel
+            app.AESModeDropDownLabel = uilabel(app.AES_Encryption);
+            app.AESModeDropDownLabel.HorizontalAlignment = 'right';
+            app.AESModeDropDownLabel.Position = [307 110 63 22];
+            app.AESModeDropDownLabel.Text = 'AES Mode';
+
+            % Create AESModeDropDown
+            app.AESModeDropDown = uidropdown(app.AES_Encryption);
+            app.AESModeDropDown.Items = {'128-bit', ''};
+            app.AESModeDropDown.Position = [385 110 100 22];
+            app.AESModeDropDown.Value = '128-bit';
+
+            % Create AESTypeDropDownLabel
+            app.AESTypeDropDownLabel = uilabel(app.AES_Encryption);
+            app.AESTypeDropDownLabel.HorizontalAlignment = 'right';
+            app.AESTypeDropDownLabel.Position = [506 110 59 22];
+            app.AESTypeDropDownLabel.Text = 'AES Type';
+
+            % Create AESTypeDropDown
+            app.AESTypeDropDown = uidropdown(app.AES_Encryption);
+            app.AESTypeDropDown.Items = {'EBC'};
+            app.AESTypeDropDown.Position = [580 110 100 22];
+            app.AESTypeDropDown.Value = 'EBC';
+
+            % Create EncryptButton
+            app.EncryptButton = uibutton(app.AES_Encryption, 'push');
+            app.EncryptButton.ButtonPushedFcn = createCallbackFcn(app, @EncryptButtonPushed, true);
+            app.EncryptButton.BackgroundColor = [0.902 0.902 0.902];
+            app.EncryptButton.FontName = 'Lucida Bright';
+            app.EncryptButton.FontSize = 20;
+            app.EncryptButton.FontWeight = 'bold';
+            app.EncryptButton.Position = [240 39 100 33];
+            app.EncryptButton.Text = 'Encrypt';
+
+            % Create DecryptButton
+            app.DecryptButton = uibutton(app.AES_Encryption, 'push');
+            app.DecryptButton.ButtonPushedFcn = createCallbackFcn(app, @DecryptButtonPushed, true);
+            app.DecryptButton.BackgroundColor = [0.902 0.902 0.902];
+            app.DecryptButton.FontName = 'Lucida Bright';
+            app.DecryptButton.FontSize = 20;
+            app.DecryptButton.FontWeight = 'bold';
+            app.DecryptButton.Position = [400 39 100 33];
+            app.DecryptButton.Text = 'Decrypt';
+
+            % Create KeyformatDropDownLabel
+            app.KeyformatDropDownLabel = uilabel(app.AES_Encryption);
+            app.KeyformatDropDownLabel.HorizontalAlignment = 'right';
+            app.KeyformatDropDownLabel.Position = [62 108 66 23];
+            app.KeyformatDropDownLabel.Text = 'Key format';
+
+            % Create KeyformatDropDown
+            app.KeyformatDropDown = uidropdown(app.AES_Encryption);
+            app.KeyformatDropDown.Items = {'Plaintext', 'Hex'};
+            app.KeyformatDropDown.Position = [143 109 139 22];
+            app.KeyformatDropDown.Value = 'Plaintext';
+
+            % Show the figure after all components are created
+            app.AES_Encryption.Visible = 'on';
+        end
+    end
+
+    % App creation and deletion
+    methods (Access = public)
+
+        % Construct app
+        function app = GUI
+
+            % Create UIFigure and components
+            createComponents(app)
+
+            % Register the app with App Designer
+            registerApp(app, app.AES_Encryption)
+
+            if nargout == 0
+                clear app
+            end
+        end
+
+        % Code that executes before app deletion
+        function delete(app)
+
+            % Delete UIFigure when app is deleted
+            delete(app.AES_Encryption)
+        end
+    end
+end
