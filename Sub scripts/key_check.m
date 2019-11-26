@@ -13,7 +13,7 @@ function keyFlag = key_check(inputKey, keyType, AESMode)
     if AESMode == "256-bit"
         hexKeyLength = 64;
         plaintextKeyLength = 32;
-    end
+
     keyFlag = false;
     if keyType == "Hex"
         hexValues = ["0"; "1"; "2"; "3"; "4"; "5"; "6"; "7"; "8"; "9"; "a"; "b"; "c"; "d"; "e"; "f"; "A"; "B"; "C"; "D"; "E"; "F"];

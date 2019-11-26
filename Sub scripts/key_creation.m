@@ -13,6 +13,7 @@ function roundKeys = key_creation(inputKey, keyType, AESMode)
     if AESMode == "256-bit"
         roundsLimit = 15; columnLimit = 8; blockLimit = 60; iLimit = 7;
     end
+
     % Create a 4x4(128-bit)/4x6(192-bit) matrix
     allKeys = reshape(AESKey,4,columnLimit);
     for i = 1:iLimit
@@ -49,6 +50,7 @@ function roundKeys = key_creation(inputKey, keyType, AESMode)
             else
                 % XOR operation between 3pos down(128-bit)/5pos down (192-bit)/7pos down (256-bit)
                 % column and current last column
+
                 newColumn = [...
                           bitxor(hex2dec(allKeys(1,end-(columnLimit-1))), hex2dec(allKeys(1,end))); ...
                           bitxor(hex2dec(allKeys(2,end-(columnLimit-1))), hex2dec(allKeys(2,end))); ...
@@ -66,6 +68,7 @@ function roundKeys = key_creation(inputKey, keyType, AESMode)
     blockKey = allKeys(:,1:blockLimit);
     for rounds = 1:roundsLimit
         % Reshape the 44(128-bit)/52(192-bit)/60(256-bit) column of keys to 16x11(128-bit)/16x13(192-bit)/16x15(256-bit)
+
         roundKeys = [roundKeys reshape(blockKey(1:16),16,1)];
         if length(blockKey) > 4
             blockKey = blockKey(:,5:end);
