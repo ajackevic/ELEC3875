@@ -27,13 +27,13 @@ classdef GUI < matlab.apps.AppBase
             keyInput = app.KeyTextArea.Value;
             keyType = app.KeyformatDropDown.Value;
             AESMode = app.AESModeDropDown.Value;
-            disp(AESMode);
+            AESType = app.AESTypeDropDown.Value;
             % Raise error dialog box if entered key is invalid
             if key_check(keyInput, keyType, AESMode)
                 msgbox(["    Invalid entered key. Check entered key";
                         "and whether the correct key format is selected."], "Invalid key");
             else
-                cipher = main_encrypt(userData, keyInput, keyType, AESMode);
+                cipher = main_encrypt(userData, keyInput, keyType, AESMode, AESType);
                 app.DataTextArea.Value = cipher;
             end
         end
@@ -44,12 +44,13 @@ classdef GUI < matlab.apps.AppBase
             keyInput = app.KeyTextArea.Value;
             keyType = app.KeyformatDropDown.Value;
             AESMode = app.AESModeDropDown.Value;
+            AESType = app.AESTypeDropDown.Value;
             % Raise error dialog box if entered key is invalid
             if key_check(keyInput, keyType, AESMode)
                 msgbox(["    Invalid entered key. Check entered key";
                         "and whether the correct key format is selected."], "Invalid key");
             else
-                plainttext = main_decrypt(userData, keyInput, keyType, AESMode);
+                plainttext = main_decrypt(userData, keyInput, keyType, AESMode, AESType);
                 app.DataTextArea.Value = plainttext;
             end
         end
@@ -114,7 +115,6 @@ classdef GUI < matlab.apps.AppBase
             % Create AESModeDropDown
             app.AESModeDropDown = uidropdown(app.AES_Encryption);
             app.AESModeDropDown.Items = {'128-bit', '192-bit', '256-bit'};
-
             app.AESModeDropDown.Position = [385 110 100 22];
             app.AESModeDropDown.Value = '128-bit';
 
@@ -126,7 +126,7 @@ classdef GUI < matlab.apps.AppBase
 
             % Create AESTypeDropDown
             app.AESTypeDropDown = uidropdown(app.AES_Encryption);
-            app.AESTypeDropDown.Items = {'EBC'};
+            app.AESTypeDropDown.Items = {'EBC', 'CBC'};
             app.AESTypeDropDown.Position = [580 110 100 22];
             app.AESTypeDropDown.Value = 'EBC';
 

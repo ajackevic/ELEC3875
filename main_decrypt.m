@@ -1,4 +1,4 @@
-function plaintext = main_decrypt(userData, inputKey, keyType, AESMode)
+function plaintext = main_decrypt(userData, inputKey, keyType, AESMode, AESType)
     % This script calls all the different steps/functions that are required by AES for decryption
     %{
       AES proccess:
@@ -27,7 +27,6 @@ function plaintext = main_decrypt(userData, inputKey, keyType, AESMode)
     if AESMode == "256-bit"
         numbRounds = 14;
     end
-
     for cipherBlock = 1:blockSize
         roundKeyOutput = add_round_key(cipherInput(:,cipherBlock),allKeys(:,numbRounds+1));
         invShiftRowOutput = shift_row(roundKeyOutput, "decrypt");
@@ -40,6 +39,17 @@ function plaintext = main_decrypt(userData, inputKey, keyType, AESMode)
         end
         roundKeyOutput = add_round_key(invSubByteOutput, allKeys(:,1));
         plaintext = [plaintext ; roundKeyOutput];
+
+        if AESType == "CBC"
+            % Will not affect first cipher block
+            if cipherBlock ~= 1
+                % XOR(decrypted block, past cipher block)
+                cbcState = bitxor(hex2dec(roundKeyOutput),hex2dec(cipherInput(:,cipherBlock-1)));
+                cbcState = string(dec2hex(cbcState));
+                % Replace plaintext output with XOR output
+                plaintext(end-15:end) = cbcState;
+            end
+        end
     end
     % Format the output to a readable string
     plaintext = AES_format(char(hex2dec(plaintext)));
