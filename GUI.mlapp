@@ -113,7 +113,8 @@ classdef GUI < matlab.apps.AppBase
 
             % Create AESModeDropDown
             app.AESModeDropDown = uidropdown(app.AES_Encryption);
-            app.AESModeDropDown.Items = {'128-bit', '192-bit'};
+            app.AESModeDropDown.Items = {'128-bit', '192-bit', '256-bit'};
+
             app.AESModeDropDown.Position = [385 110 100 22];
             app.AESModeDropDown.Value = '128-bit';
 

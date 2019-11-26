@@ -24,6 +24,9 @@ function cipher = main_encrypt(userData, inputKey, keyType, AESMode)
     if AESMode == "192-bit"
         numbRounds = 12;
     end
+    if AESMode == "256-bit"
+        numbRounds = 14;
+    end
     for hexBlock = 1:hexDataSize
         roundKeyOutput = add_round_key(hexData(:,hexBlock),allKeys(:,1));
         for rounds = 2:numbRounds

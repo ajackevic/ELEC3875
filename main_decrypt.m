@@ -24,6 +24,10 @@ function plaintext = main_decrypt(userData, inputKey, keyType, AESMode)
     if AESMode == "192-bit"
         numbRounds = 12;
     end
+    if AESMode == "256-bit"
+        numbRounds = 14;
+    end
+
     for cipherBlock = 1:blockSize
         roundKeyOutput = add_round_key(cipherInput(:,cipherBlock),allKeys(:,numbRounds+1));
         invShiftRowOutput = shift_row(roundKeyOutput, "decrypt");
