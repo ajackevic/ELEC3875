@@ -1,5 +1,5 @@
 % This script calls all the different steps/functions that are required by AES for encryption
-function cipher = main_encrypt(userData, inputKey, keyType)
+function cipher = main_encrypt(userData, inputKey, keyType, AESMode)
     %{
       AES proccess:
         1)KeyExpansion
@@ -16,11 +16,20 @@ function cipher = main_encrypt(userData, inputKey, keyType)
     hexData = format_encrypt_in(userData);
     hexDataSize = size(hexData,2);
     % Call the function key_creation and acquire all the round keys
-    allKeys = key_creation(inputKey, keyType);
+    allKeys = key_creation(inputKey, keyType, AESMode);
     % Repeat the AES process for the amount of 16 byte blocks in hexData
+    if AESMode == "128-bit"
+        numbRounds = 10;
+    end
+    if AESMode == "192-bit"
+        numbRounds = 12;
+    end
+    if AESMode == "256-bit"
+        numbRounds = 14;
+    end
     for hexBlock = 1:hexDataSize
         roundKeyOutput = add_round_key(hexData(:,hexBlock),allKeys(:,1));
-        for rounds = 2:10
+        for rounds = 2:numbRounds
             subByteOutput = sub_byte(roundKeyOutput, "encrypt");
             shiftRowOutput = shift_row(subByteOutput, "encrypt");
             mixColumnOutput = mix_column(shiftRowOutput, "encrypt");
@@ -28,7 +37,7 @@ function cipher = main_encrypt(userData, inputKey, keyType)
         end
         subByteOutput = sub_byte(roundKeyOutput, "encrypt");
         shiftRowOutput = shift_row(subByteOutput, "encrypt");
-        roundKeyOutput = add_round_key(shiftRowOutput, allKeys(:,11));
+        roundKeyOutput = add_round_key(shiftRowOutput, allKeys(:,numbRounds+1));
         cipher = [cipher ; roundKeyOutput];
     end
     cipher = AES_format(cipher);
