@@ -41,6 +41,10 @@ classdef GUI < matlab.apps.AppBase
                     msgbox(["                 Invalid entered IV. ";
                             "Format is 16 hex value, check entered value "], "Invalid IV");
                 end
+                if data_check(userData, keyType)
+                    msgbox(["         Invalid entered data.";
+                            "Encryption data requires an input" ], "Invalid data");
+                end
             else
                 cipher = main_encrypt(userData, keyInput, keyType, AESMode, AESType, IVValue);
                 app.DataTextArea.Value = cipher;
@@ -55,8 +59,8 @@ classdef GUI < matlab.apps.AppBase
             AESMode = app.AESModeDropDown.Value;
             AESType = app.AESTypeDropDown.Value;
             IVValue = app.IVTextArea.Value;
-            % Raise error dialog box if entered key is invalid
-            if key_check(keyInput, keyType, AESMode) || IV_check(IVValue)
+            % Raise error dialog box if either key, data or IV scripts rais flags
+            if key_check(keyInput, keyType, AESMode) || IV_check(IVValue) || data_check(userData, keyType)
                 if key_check(keyInput, keyType, AESMode)
                     msgbox(["    Invalid entered key. Check entered key";
                             "and whether the correct key format is selected."], "Invalid key");
@@ -64,6 +68,10 @@ classdef GUI < matlab.apps.AppBase
                 if IV_check(IVValue)
                     msgbox(["                 Invalid entered IV. ";
                             "Format is 16 hex value, check entered value "], "Invalid IV");
+                end
+                if data_check(userData, keyType)
+                    msgbox(["        Invalid entered data. Decryption format is a";
+                            " continuous hex value of length that is a multiple of 16" ], "Invalid data");
                 end
             else
                 plainttext = main_decrypt(userData, keyInput, keyType, AESMode, AESType, IVValue);
@@ -80,9 +88,11 @@ classdef GUI < matlab.apps.AppBase
         function AESTypeDropDownValueChanged(app, event)
 
             if app.AESTypeDropDown.Value == "CBC"
+                % Reveal/enable IV text and label if AES Type is CBC
                 app.IVTextArea.Enable = 1;
                 app.IVTextAreaLabel.Enable = 1;
             else
+                % Hide/disable IV text and label if AES Type is ECB
                 app.IVTextArea.Enable = 0;
                 app.IVTextAreaLabel.Enable = 0;
             end
@@ -122,6 +132,7 @@ classdef GUI < matlab.apps.AppBase
 
             % Create DataTextArea
             app.DataTextArea = uitextarea(app.AES_Encryption);
+            app.DataTextArea.Tooltip = {'Decryption data has to be a continuous hex value of length that is a multiple of 16 values'};
             app.DataTextArea.Position = [111 192 569 170];
 
             % Create KeyTextAreaLabel
