@@ -1,5 +1,5 @@
 % This script calls all the different steps/functions that are required by AES for encryption
-function cipher = main_encrypt(userData, inputKey, keyType, AESMode, AESType)
+function cipher = main_encrypt(userData, inputKey, keyType, AESMode, AESType, IVValue)
     %{
       AES proccess:
         1)KeyExpansion
@@ -26,6 +26,17 @@ function cipher = main_encrypt(userData, inputKey, keyType, AESMode, AESType)
     end
     if AESMode == "256-bit"
         numbRounds = 14;
+    end
+    if AESType == "CBC"
+        % If IV text box is left empty assign empty values
+        if IVValue == ""
+            IVValue = "00000000000000000000000000000000";
+        end
+        % XOR(IV value, first plaintext block)
+        IVState = bitxor(hex2dec(AES_format(char(IVValue))),hex2dec(hexData(:,1)));
+        IVState = string(dec2hex(IVState));
+        % Assign first plaintext block with the XOR output
+        hexData(:,1) = IVState;
     end
     for hexBlock = 1:hexDataSize
         roundKeyOutput = add_round_key(hexData(:,hexBlock),allKeys(:,1));
