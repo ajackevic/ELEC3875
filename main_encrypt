@@ -1,5 +1,5 @@
 % This script calls all the different steps/functions that are required by AES for encryption
-function cipher = main_encrypt(userData, inputKey, keyType, AESMode)
+function cipher = main_encrypt(userData, inputKey, keyType, AESMode, AESType)
     %{
       AES proccess:
         1)KeyExpansion
@@ -39,6 +39,17 @@ function cipher = main_encrypt(userData, inputKey, keyType, AESMode)
         shiftRowOutput = shift_row(subByteOutput, "encrypt");
         roundKeyOutput = add_round_key(shiftRowOutput, allKeys(:,numbRounds+1));
         cipher = [cipher ; roundKeyOutput];
+
+        if AESType == "CBC"
+            % will not affect the last Plaintext 16 byte block
+            if hexBlock ~= hexDataSize
+                % XOR(cipher block, future plaintext block)
+                cbcState = bitxor(hex2dec(roundKeyOutput),hex2dec(hexData(:,hexBlock+1)));
+                cbcState = string(dec2hex(cbcState));
+                % Replace future plaintext block with XOR output
+                hexData(:,hexBlock+1) = cbcState;
+            end
+        end
     end
     cipher = AES_format(cipher);
 end
