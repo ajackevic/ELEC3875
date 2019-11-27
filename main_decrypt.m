@@ -1,4 +1,4 @@
-function plaintext = main_decrypt(userData, inputKey, keyType, AESMode, AESType)
+function plaintext = main_decrypt(userData, inputKey, keyType, AESMode, AESType, IVValue)
     % This script calls all the different steps/functions that are required by AES for decryption
     %{
       AES proccess:
@@ -41,8 +41,17 @@ function plaintext = main_decrypt(userData, inputKey, keyType, AESMode, AESType)
         plaintext = [plaintext ; roundKeyOutput];
 
         if AESType == "CBC"
-            % Will not affect first cipher block
-            if cipherBlock ~= 1
+
+            if cipherBlock == 1
+                % If IV text box is left empty assign empty values
+                if IVValue == ""
+                    IVValue = "00000000000000000000000000000000";
+                end
+                % XOR(IV value, first plaintext decrypted block)
+                IVState = bitxor(hex2dec(AES_format(char(IVValue))),hex2dec(plaintext));
+                IVState = string(dec2hex(IVState));
+                plaintext = IVState;
+            else
                 % XOR(decrypted block, past cipher block)
                 cbcState = bitxor(hex2dec(roundKeyOutput),hex2dec(cipherInput(:,cipherBlock-1)));
                 cbcState = string(dec2hex(cbcState));
@@ -50,6 +59,7 @@ function plaintext = main_decrypt(userData, inputKey, keyType, AESMode, AESType)
                 plaintext(end-15:end) = cbcState;
             end
         end
+
     end
     % Format the output to a readable string
     plaintext = AES_format(char(hex2dec(plaintext)));
