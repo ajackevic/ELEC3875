@@ -3,10 +3,10 @@
 function value_out = gf_mul(value1_in, value2_in)
 
     % Converting hex to decimal to binary for gfconv()
-    value1_in = de2bi(hex2dec(value1_in));
-    value2_in = de2bi(hex2dec(value2_in));
+    value1_in = de2bi(hex2dec(value1_in),8);
+    %value2_in = de2bi(hex2dec(value2_in));
     % Multiplication of polynomials in GF order 2.
-    gf_muil_b = gfconv(value1_in, value2_in,2);
+    gf_muil_b = gf_conv(value1_in, value2_in);
     gf_muil_d = bi2de(gf_muil_b);
 
     % Whilst gf_muil_d is above GF(2^8)(overflow), XOR with 0x11B starting from MSB
