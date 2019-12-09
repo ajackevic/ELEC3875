@@ -3,8 +3,13 @@ function hexBlockOutput = format_encrypt_in(userData, dataFormat)
     hexPlaintext = [];
     hexChar = [];
 
-    % Converts ASCII to hex and stored in hexPlaintext trray
-    hexPlaintext = string(dec2hex(char(userData)));
+    if dataFormat == "Hex"
+        % Format input hex
+        hexPlaintext = AES_format(char(userData));
+    else
+        % Converts ASCII to hex and stored in hexPlaintext trray
+        hexPlaintext = string(dec2hex(char(userData)));
+    end
 
     % Adds 0x20 (hex space value) to hexPlaintext if array value is not a muilptiple of 16
     if length(hexPlaintext) <= 16

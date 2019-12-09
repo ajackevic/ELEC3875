@@ -1,8 +1,20 @@
-function dataFlag = data_check(data, keyType, type)
+function dataFlag = data_check(data, dataFormat, keyType, type)
     dataFlag = false;
     data = char(data);
     if isempty(data)
         dataFlag = true;
+    end
+
+    if dataFormat == "Hex"
+        if mod(length(data),2) ~= 0
+            dataFlag = true;
+        end
+        hexValues = ["0"; "1"; "2"; "3"; "4"; "5"; "6"; "7"; "8"; "9"; "a"; "b"; "c"; "d"; "e"; "f"; "A"; "B"; "C"; "D"; "E"; "F"];
+        for i = 1:length(data)
+            if ~ismember(string(data(i)),hexValues)
+                dataFlag = true;
+            end
+        end
     end
 
     if type == "decrypt"
