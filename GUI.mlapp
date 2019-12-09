@@ -34,7 +34,7 @@ classdef GUI < matlab.apps.AppBase
             AESType = app.AESTypeDropDown.Value;
             IVValue = app.IVTextArea.Value;
             % Raise error dialog box if entered key is invalid
-            if key_check(keyInput, keyType, AESMode) || IV_check(IVValue)
+            if key_check(keyInput, keyType, AESMode) || IV_check(IVValue) || data_check(userData, keyType, "encrypt")
                 if key_check(keyInput, keyType, AESMode)
                     msgbox(["    Invalid entered key. Check entered key";
                             "and whether the correct key format is selected."], "Invalid key");
@@ -44,6 +44,10 @@ classdef GUI < matlab.apps.AppBase
                             "Format is 16 hex value, check entered value "], "Invalid IV");
                 end
                 if data_check(userData, keyType)
+                    msgbox(["         Invalid entered data.";
+                            "Encryption data requires an input" ], "Invalid data");
+                end
+                if data_check(userData, dataFormat, keyType, "encrypt")
                     msgbox(["         Invalid entered data.";
                             "Encryption data requires an input" ], "Invalid data");
                 end
@@ -58,11 +62,11 @@ classdef GUI < matlab.apps.AppBase
             userData = app.DataTextArea.Value;
             keyInput = app.KeyTextArea.Value;
             keyType = app.KeyformatDropDown.Value;
-            AESMode = app.AESModeDropDown.Value;
             AESType = app.AESTypeDropDown.Value;
+            AESMode = app.AESModeDropDown.Value;
             IVValue = app.IVTextArea.Value;
             % Raise error dialog box if either key, data or IV scripts rais flags
-            if key_check(keyInput, keyType, AESMode) || IV_check(IVValue) || data_check(userData, keyType)
+            if key_check(keyInput, keyType, AESMode) || IV_check(IVValue) || data_check(userData, keyType, "decrypt")
                 if key_check(keyInput, keyType, AESMode)
                     msgbox(["    Invalid entered key. Check entered key";
                             "and whether the correct key format is selected."], "Invalid key");
@@ -71,7 +75,7 @@ classdef GUI < matlab.apps.AppBase
                     msgbox(["                 Invalid entered IV. ";
                             "Format is 16 hex value, check entered value "], "Invalid IV");
                 end
-                if data_check(userData, keyType)
+                if data_check(userData, keyType, "decrypt")
                     msgbox(["        Invalid entered data. Decryption format is a";
                             " continuous hex value of length that is a multiple of 16" ], "Invalid data");
                 end
