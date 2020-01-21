@@ -2,24 +2,25 @@ classdef GUI < matlab.apps.AppBase
 
     % Properties that correspond to app components
     properties (Access = public)
-        AES_Encryption          matlab.ui.Figure
-        AESENCRYPTIONLabel      matlab.ui.control.Label
-        DataTextAreaLabel       matlab.ui.control.Label
-        DataTextArea            matlab.ui.control.TextArea
-        KeyTextAreaLabel        matlab.ui.control.Label
-        KeyTextArea             matlab.ui.control.TextArea
-        AESModeDropDownLabel    matlab.ui.control.Label
-        AESModeDropDown         matlab.ui.control.DropDown
-        AESTypeDropDownLabel    matlab.ui.control.Label
-        AESTypeDropDown         matlab.ui.control.DropDown
-        EncryptButton           matlab.ui.control.Button
-        DecryptButton           matlab.ui.control.Button
-        KeyformatDropDownLabel  matlab.ui.control.Label
-        KeyformatDropDown       matlab.ui.control.DropDown
-        IVTextAreaLabel         matlab.ui.control.Label
-        IVTextArea              matlab.ui.control.TextArea
-        Image                   matlab.ui.control.Image
-
+        AES_Encryption                 matlab.ui.Figure
+        AESENCRYPTIONLabel             matlab.ui.control.Label
+        DataTextAreaLabel              matlab.ui.control.Label
+        DataTextArea                   matlab.ui.control.TextArea
+        KeyTextAreaLabel               matlab.ui.control.Label
+        KeyTextArea                    matlab.ui.control.TextArea
+        AESTypeDropDown_2Label         matlab.ui.control.Label
+        AESTypeDropDown                matlab.ui.control.DropDown
+        EncryptButton                  matlab.ui.control.Button
+        DecryptButton                  matlab.ui.control.Button
+        KeyformatDropDownLabel         matlab.ui.control.Label
+        KeyformatDropDown              matlab.ui.control.DropDown
+        IVTextAreaLabel                matlab.ui.control.Label
+        IVTextArea                     matlab.ui.control.TextArea
+        Image                          matlab.ui.control.Image
+        DataformatInputOutputDropDownLabel  matlab.ui.control.Label
+        DataformatInputOutputDropDown  matlab.ui.control.DropDown
+        AESModeDropDownLabel           matlab.ui.control.Label
+        AESModeDropDown                matlab.ui.control.DropDown
     end
 
     % Callbacks that handle component events
@@ -33,9 +34,10 @@ classdef GUI < matlab.apps.AppBase
             AESMode = app.AESModeDropDown.Value;
             AESType = app.AESTypeDropDown.Value;
             IVValue = app.IVTextArea.Value;
+            dataFormat = app.DataformatInputOutputDropDown.Value;
             % Raise error dialog box if entered key is invalid
-            if key_check(keyInput, keyType, AESMode) || IV_check(IVValue) || data_check(userData, keyType, "encrypt")
-                if key_check(keyInput, keyType, AESMode)
+            if key_check(keyInput, keyType, AESType) || IV_check(IVValue) || data_check(userData, dataFormat, keyType, "encrypt")
+                if key_check(keyInput, keyType, AESType)
                     msgbox(["    Invalid entered key. Check entered key";
                             "and whether the correct key format is selected."], "Invalid key");
                 end
@@ -43,16 +45,12 @@ classdef GUI < matlab.apps.AppBase
                     msgbox(["                 Invalid entered IV. ";
                             "Format is 16 hex value, check entered value "], "Invalid IV");
                 end
-                if data_check(userData, keyType)
-                    msgbox(["         Invalid entered data.";
-                            "Encryption data requires an input" ], "Invalid data");
-                end
                 if data_check(userData, dataFormat, keyType, "encrypt")
                     msgbox(["         Invalid entered data.";
                             "Encryption data requires an input" ], "Invalid data");
                 end
             else
-                cipher = main_encrypt(userData, keyInput, keyType, AESMode, AESType, IVValue);
+                cipher = main_encrypt(userData, dataFormat, keyInput, keyType, AESMode, AESType, IVValue);
                 app.DataTextArea.Value = cipher;
             end
         end
@@ -65,9 +63,10 @@ classdef GUI < matlab.apps.AppBase
             AESType = app.AESTypeDropDown.Value;
             AESMode = app.AESModeDropDown.Value;
             IVValue = app.IVTextArea.Value;
+            dataFormat = app.DataformatInputOutputDropDown.Value;
             % Raise error dialog box if either key, data or IV scripts rais flags
-            if key_check(keyInput, keyType, AESMode) || IV_check(IVValue) || data_check(userData, keyType, "decrypt")
-                if key_check(keyInput, keyType, AESMode)
+            if key_check(keyInput, keyType, AESType) || IV_check(IVValue) || data_check(userData, "pass", keyType, "decrypt")
+                if key_check(keyInput, keyType, AESType)
                     msgbox(["    Invalid entered key. Check entered key";
                             "and whether the correct key format is selected."], "Invalid key");
                 end
@@ -75,26 +74,29 @@ classdef GUI < matlab.apps.AppBase
                     msgbox(["                 Invalid entered IV. ";
                             "Format is 16 hex value, check entered value "], "Invalid IV");
                 end
-                if data_check(userData, keyType, "decrypt")
+                if data_check(userData, "pass", keyType, "decrypt")
                     msgbox(["        Invalid entered data. Decryption format is a";
                             " continuous hex value of length that is a multiple of 16" ], "Invalid data");
                 end
             else
-                plainttext = main_decrypt(userData, keyInput, keyType, AESMode, AESType, IVValue);
+                plainttext = main_decrypt(userData, dataFormat, keyInput, keyType, AESMode, AESType, IVValue);
                 app.DataTextArea.Value = plainttext;
             end
         end
 
         % Value changed function: KeyTextArea
         function KeyTextAreaValueChanged(app, event)
-            value = app.KeyTextArea.Value;
 
         end
 
-        % Value changed function: AESTypeDropDown
-        function AESTypeDropDownValueChanged(app, event)
+        % Callback function
+        function AESModeDropDownValueChanged(app, event)
 
-            if app.AESTypeDropDown.Value == "CBC"
+        end
+
+        % Value changed function: AESModeDropDown
+        function AESModeDropDownValueChanged2(app, event)
+            if app.AESModeDropDown.Value == "CBC"
                 % Reveal/enable IV text and label if AES Type is CBC
                 app.IVTextArea.Enable = 1;
                 app.IVTextAreaLabel.Enable = 1;
@@ -103,24 +105,6 @@ classdef GUI < matlab.apps.AppBase
                 app.IVTextArea.Enable = 0;
                 app.IVTextAreaLabel.Enable = 0;
             end
-
-
-        end
-
-        % Value changed function: AESTypeDropDown
-        function AESTypeDropDownValueChanged(app, event)
-
-            if app.AESTypeDropDown.Value == "CBC"
-                % Reveal/enable IV text and label if AES Type is CBC
-                app.IVTextArea.Enable = 1;
-                app.IVTextAreaLabel.Enable = 1;
-            else
-                % Hide/disable IV text and label if AES Type is ECB
-                app.IVTextArea.Enable = 0;
-                app.IVTextAreaLabel.Enable = 0;
-            end
-
-
         end
     end
 
@@ -170,30 +154,17 @@ classdef GUI < matlab.apps.AppBase
             app.KeyTextArea.Tooltip = {''};
             app.KeyTextArea.Position = [110 152 570 20];
 
-            % Create AESModeDropDownLabel
-            app.AESModeDropDownLabel = uilabel(app.AES_Encryption);
-            app.AESModeDropDownLabel.HorizontalAlignment = 'right';
-            app.AESModeDropDownLabel.Position = [306 106 63 22];
-            app.AESModeDropDownLabel.Text = 'AES Mode';
-
-            % Create AESModeDropDown
-            app.AESModeDropDown = uidropdown(app.AES_Encryption);
-            app.AESModeDropDown.Items = {'128-bit', '192-bit', '256-bit'};
-            app.AESModeDropDown.Position = [384 106 100 22];
-            app.AESModeDropDown.Value = '128-bit';
-
-            % Create AESTypeDropDownLabel
-            app.AESTypeDropDownLabel = uilabel(app.AES_Encryption);
-            app.AESTypeDropDownLabel.HorizontalAlignment = 'right';
-            app.AESTypeDropDownLabel.Position = [506 106 59 22];
-            app.AESTypeDropDownLabel.Text = 'AES Type';
+            % Create AESTypeDropDown_2Label
+            app.AESTypeDropDown_2Label = uilabel(app.AES_Encryption);
+            app.AESTypeDropDown_2Label.HorizontalAlignment = 'right';
+            app.AESTypeDropDown_2Label.Position = [564 105 63 23];
+            app.AESTypeDropDown_2Label.Text = 'AES Type';
 
             % Create AESTypeDropDown
             app.AESTypeDropDown = uidropdown(app.AES_Encryption);
-            app.AESTypeDropDown.Items = {'EBC', 'CBC'};
-            app.AESTypeDropDown.ValueChangedFcn = createCallbackFcn(app, @AESTypeDropDownValueChanged, true);
-            app.AESTypeDropDown.Position = [580 106 100 22];
-            app.AESTypeDropDown.Value = 'EBC';
+            app.AESTypeDropDown.Items = {'128-bit', '192-bit', '256-bit'};
+            app.AESTypeDropDown.Position = [636 106 74 22];
+            app.AESTypeDropDown.Value = '128-bit';
 
             % Create EncryptButton
             app.EncryptButton = uibutton(app.AES_Encryption, 'push');
@@ -202,7 +173,7 @@ classdef GUI < matlab.apps.AppBase
             app.EncryptButton.FontName = 'Lucida Bright';
             app.EncryptButton.FontSize = 20;
             app.EncryptButton.FontWeight = 'bold';
-            app.EncryptButton.Position = [422 53 100 33];
+            app.EncryptButton.Position = [437 40 100 33];
             app.EncryptButton.Text = 'Encrypt';
 
             % Create DecryptButton
@@ -212,39 +183,65 @@ classdef GUI < matlab.apps.AppBase
             app.DecryptButton.FontName = 'Lucida Bright';
             app.DecryptButton.FontSize = 20;
             app.DecryptButton.FontWeight = 'bold';
-            app.DecryptButton.Position = [554 53 100 33];
+            app.DecryptButton.Position = [562 41 100 33];
             app.DecryptButton.Text = 'Decrypt';
 
             % Create KeyformatDropDownLabel
             app.KeyformatDropDownLabel = uilabel(app.AES_Encryption);
             app.KeyformatDropDownLabel.HorizontalAlignment = 'right';
-            app.KeyformatDropDownLabel.Position = [57 106 66 23];
+            app.KeyformatDropDownLabel.Position = [36 106 66 23];
             app.KeyformatDropDownLabel.Text = 'Key format';
 
             % Create KeyformatDropDown
             app.KeyformatDropDown = uidropdown(app.AES_Encryption);
             app.KeyformatDropDown.Items = {'Plaintext', 'Hex'};
-            app.KeyformatDropDown.Position = [132 106 137 20];
+            app.KeyformatDropDown.Position = [112 106 85 20];
             app.KeyformatDropDown.Value = 'Plaintext';
 
             % Create IVTextAreaLabel
             app.IVTextAreaLabel = uilabel(app.AES_Encryption);
             app.IVTextAreaLabel.HorizontalAlignment = 'center';
             app.IVTextAreaLabel.Enable = 'off';
-            app.IVTextAreaLabel.Position = [63 54 26 23];
+            app.IVTextAreaLabel.Position = [74 44 26 23];
             app.IVTextAreaLabel.Text = 'IV';
 
             % Create IVTextArea
             app.IVTextArea = uitextarea(app.AES_Encryption);
             app.IVTextArea.Enable = 'off';
             app.IVTextArea.Tooltip = {''};
-            app.IVTextArea.Position = [110 57 276 20];
+            app.IVTextArea.Position = [121 47 276 20];
 
             % Create Image
             app.Image = uiimage(app.AES_Encryption);
-            app.Image.Tooltip = {''; 'Data: Decryption data has to be a continuous hex value of length that is a multiple of 16. Both uppercase and lowercase letters are accepted.'; ''; 'Key: Encryption and decryption keys can either be 128-bit, 192-bit or 256-bit (depending on the selected AES Mode). One has a choice of either entering the key in plaintext or hex. If plaintext, for 128-bit key user should enter 16 characters, for 192-bit 24 characters and for 256-bit 32 characters. For hex, 128-bit key user should enter a continuous 32 hex value, for 192-bit a continuous 48 hex value and for 256-bit a continuous 64 hex value. '; 'Examples:'; 'Plaintext 128-bit key:Thats my Kung Fu'; 'Hex 128-bit key:5468617473206D79204B756E67204675'; ''; 'IV: Initialization vector requires a continuous 32 hex value when using AES Type CBC. If IV is unused leave text field blank. Example:'; '347117a91ddf95ab54037d299e32face'; ''; 'Recommendations: For encrypting information that is above 16 characters in length, it is suggested to use CBC instead of ECB to prevent leaking information. Whilst the user can choose not to use the IV for CBC, it is highly recommended a unique IV value be used for each encryption of data.'; ''; ''};
+            app.Image.Tooltip = {'Data: Decryption data has to be a continuous hex value of length that is a multiple of 16. Both uppercase and lowercase letters are accepted.'; ''; 'Key: Encryption and decryption keys can either be 128-bit, 192-bit or 256-bit (depending on the selected AES Mode). One has a choice of either entering the key in plaintext or hex. If plaintext, for 128-bit key user should enter 16 characters, for 192-bit 24 characters and for 256-bit 32 characters. For hex, 128-bit key user should enter a continuous 32 hex value, for 192-bit a continuous 48 hex value and for 256-bit a continuous 64 hex value. '; 'Examples:'; 'Plaintext 128-bit key: Thats my Kung Fu'; 'Hex 128-bit key:5468617473206D79204B756E67204675'; ''; 'Data format: Selection of the type of format data will be encrypted/decrypted. Can either be input and output in plaintext or hex '; ''; 'IV: Initialization vector requires a continuous 32 hex value when using AES Type CBC. If IV is unused leave text field blank. '; 'Example:'; '347117a91ddf95ab54037d299e32face'; ''; 'Recommendations: For encrypting information that is above 16 characters in length, it is suggested to use CBC instead of ECB to prevent leaking information. Whilst the user can choose not to use the IV for CBC, it is highly recommended a unique IV value be used for each encryption of data.'; ''; ''};
             app.Image.Position = [710 25 34 30];
             app.Image.ImageSource = 'help icon.png';
+
+            % Create DataformatInputOutputDropDownLabel
+            app.DataformatInputOutputDropDownLabel = uilabel(app.AES_Encryption);
+            app.DataformatInputOutputDropDownLabel.HorizontalAlignment = 'center';
+            app.DataformatInputOutputDropDownLabel.Position = [208 100 80 28];
+            app.DataformatInputOutputDropDownLabel.Text = {'Data format'; '(Input/Output)'};
+
+            % Create DataformatInputOutputDropDown
+            app.DataformatInputOutputDropDown = uidropdown(app.AES_Encryption);
+            app.DataformatInputOutputDropDown.Items = {'Plaintext', 'Hex'};
+            app.DataformatInputOutputDropDown.Position = [294 106 90 22];
+            app.DataformatInputOutputDropDown.Value = 'Plaintext';
+
+            % Create AESModeDropDownLabel
+            app.AESModeDropDownLabel = uilabel(app.AES_Encryption);
+            app.AESModeDropDownLabel.HorizontalAlignment = 'right';
+            app.AESModeDropDownLabel.Position = [403 105 70 23];
+            app.AESModeDropDownLabel.Text = 'AES Mode';
+
+            % Create AESModeDropDown
+            app.AESModeDropDown = uidropdown(app.AES_Encryption);
+            app.AESModeDropDown.Items = {'ECB', 'CBC'};
+            app.AESModeDropDown.ValueChangedFcn = createCallbackFcn(app, @AESModeDropDownValueChanged2, true);
+            app.AESModeDropDown.Position = [480 106 74 22];
+            app.AESModeDropDown.Value = 'ECB';
+
             % Show the figure after all components are created
             app.AES_Encryption.Visible = 'on';
         end

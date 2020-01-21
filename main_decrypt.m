@@ -1,4 +1,4 @@
-function plaintext = main_decrypt(userData, inputKey, keyType, AESMode, AESType, IVValue)
+function plaintext = main_decrypt(userData, dataFormat, inputKey, keyType, AESMode, AESType, IVValue)
     % This script calls all the different steps/functions that are required by AES for decryption
     %{
       AES proccess:
@@ -13,18 +13,19 @@ function plaintext = main_decrypt(userData, inputKey, keyType, AESMode, AESType,
         4)AddRoundKey
     Note: Keys used are in reverse order to that of encryption, hence 11, 10, 9 ...
     %}
+    addpath('Sub scripts');
     plaintext = [];
     % Call key creation function and format userData
-    allKeys = key_creation(inputKey, keyType, AESMode);
+    allKeys = key_creation(inputKey, keyType, AESType);
     cipherInput = format_decrypt_in(userData);
     blockSize = size(cipherInput,2);
-    if AESMode == "128-bit"
+    if AESType == "128-bit"
         numbRounds = 10;
     end
-    if AESMode == "192-bit"
+    if AESType == "192-bit"
         numbRounds = 12;
     end
-    if AESMode == "256-bit"
+    if AESType == "256-bit"
         numbRounds = 14;
     end
     for cipherBlock = 1:blockSize
@@ -40,8 +41,7 @@ function plaintext = main_decrypt(userData, inputKey, keyType, AESMode, AESType,
         roundKeyOutput = add_round_key(invSubByteOutput, allKeys(:,1));
         plaintext = [plaintext ; roundKeyOutput];
 
-        if AESType == "CBC"
-
+        if AESMode == "CBC"
             if cipherBlock == 1
                 % If IV text box is left empty assign empty values
                 if IVValue == ""
@@ -61,6 +61,11 @@ function plaintext = main_decrypt(userData, inputKey, keyType, AESMode, AESType,
         end
 
     end
-    % Format the output to a readable string
-    plaintext = AES_format(char(hex2dec(plaintext)));
+    if dataFormat == "Hex"
+        plaintext = AES_format(plaintext);
+    else
+        % Format the output to a readable string
+        plaintext = AES_format(char(hex2dec(plaintext)));
+    end
+
 end

@@ -1,19 +1,19 @@
 % This function checks the whether the input key is a valid input
-function keyFlag = key_check(inputKey, keyType, AESMode)
+function keyFlag = key_check(inputKey, keyType, AESType)
     inputKey = char(inputKey);
     % Set flag to false, if criteria is not met set flag to true
-    if AESMode == "128-bit"
+    if AESType == "128-bit"
         hexKeyLength = 32;
         plaintextKeyLength = 16;
     end
-    if AESMode == "192-bit"
+    if AESType == "192-bit"
         hexKeyLength = 48;
         plaintextKeyLength = 24;
     end
-    if AESMode == "256-bit"
+    if AESType == "256-bit"
         hexKeyLength = 64;
         plaintextKeyLength = 32;
-
+    end
     keyFlag = false;
     if keyType == "Hex"
         hexValues = ["0"; "1"; "2"; "3"; "4"; "5"; "6"; "7"; "8"; "9"; "a"; "b"; "c"; "d"; "e"; "f"; "A"; "B"; "C"; "D"; "E"; "F"];

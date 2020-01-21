@@ -1,33 +1,34 @@
 % This script calls all the different steps/functions that are required by AES for encryption
-function cipher = main_encrypt(userData, inputKey, keyType, AESMode, AESType, IVValue)
+function cipher = main_encrypt(userData, dataFormat, inputKey, keyType, AESMode, AESType, IVValue)
     %{
       AES proccess:
         1)KeyExpansion
         2)AddRoundKey
         3)SubBytes     ---
           ShiftRows       | Repeat this proccess for x9, x11, x13 time
-          MixColumns      |  Depends on AES bit length
+          MixColumns      | Depends on AES bit length
           AddRoundKey  ---
         4)SubBytes
           ShiftRows
           AddRoundKey
     %}
+    addpath('Sub scripts');
     cipher = [];
-    hexData = format_encrypt_in(userData);
+    hexData = format_encrypt_in(userData, dataFormat);
     hexDataSize = size(hexData,2);
     % Call the function key_creation and acquire all the round keys
-    allKeys = key_creation(inputKey, keyType, AESMode);
+    allKeys = key_creation(inputKey, keyType, AESType);
     % Repeat the AES process for the amount of 16 byte blocks in hexData
-    if AESMode == "128-bit"
+    if AESType == "128-bit"
         numbRounds = 10;
     end
-    if AESMode == "192-bit"
+    if AESType == "192-bit"
         numbRounds = 12;
     end
-    if AESMode == "256-bit"
+    if AESType == "256-bit"
         numbRounds = 14;
     end
-    if AESType == "CBC"
+    if AESMode == "CBC"
         % If IV text box is left empty assign empty values
         if IVValue == ""
             IVValue = "00000000000000000000000000000000";
@@ -51,7 +52,7 @@ function cipher = main_encrypt(userData, inputKey, keyType, AESMode, AESType, IV
         roundKeyOutput = add_round_key(shiftRowOutput, allKeys(:,numbRounds+1));
         cipher = [cipher ; roundKeyOutput];
 
-        if AESType == "CBC"
+        if AESMode == "CBC"
             % will not affect the last Plaintext 16 byte block
             if hexBlock ~= hexDataSize
                 % XOR(cipher block, future plaintext block)
