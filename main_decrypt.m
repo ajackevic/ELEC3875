@@ -13,7 +13,7 @@ function plaintext = main_decrypt(userData, dataFormat, inputKey, keyType, AESMo
         4)AddRoundKey
     Note: Keys used are in reverse order to that of encryption, hence 11, 10, 9 ...
     %}
-    addpath('./Sub scripts/');
+    addpath('Sub scripts');
     plaintext = [];
     % Call key creation function and format userData
     allKeys = key_creation(inputKey, keyType, AESType);

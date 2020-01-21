@@ -6,13 +6,13 @@ function cipher = main_encrypt(userData, dataFormat, inputKey, keyType, AESMode,
         2)AddRoundKey
         3)SubBytes     ---
           ShiftRows       | Repeat this proccess for x9, x11, x13 time
-          MixColumns      |  Depends on AES bit length
+          MixColumns      | Depends on AES bit length
           AddRoundKey  ---
         4)SubBytes
           ShiftRows
           AddRoundKey
     %}
-    addpath('./Sub scripts/');
+    addpath('Sub scripts');
     cipher = [];
     hexData = format_encrypt_in(userData, dataFormat);
     hexDataSize = size(hexData,2);
