@@ -12,6 +12,7 @@ function cipher = main_encrypt(userData, dataFormat, inputKey, keyType, AESMode,
           ShiftRows
           AddRoundKey
     %}
+    addpath('./Sub scripts/');
     cipher = [];
     hexData = format_encrypt_in(userData, dataFormat);
     hexDataSize = size(hexData,2);
