@@ -7,17 +7,14 @@ and designed in Verilog and then tested on an FPGA (Terasic DE1-SoC).
 
 ## Getting Started
 
-This section should contain information stating on how to execute the
-script on ones own PC. Update this section once the MATLAB script has been
-written. Mention how one only needs MATLAB online to run the script
-
-## Running the tests
-
-Explain how to run the automated tests for this system
+To run the AES appliction, download the  ajackevic/ELEC3875 
+repository and execute the GUI.mlapp on MATLAB (version 2013 onward).
+Once executed, one should see a window pop-up containing the AES application.
 
 ## Authors
 
 Designer: Augustas Jackevic
+
 Supervisor: Dr. David Cowell
 
 ## License
@@ -27,6 +24,4 @@ licenses.
 
 ## Acknowledgments
 
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+Name: Noel, Dr. David Cowell, and a few sources
