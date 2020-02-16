@@ -44,12 +44,12 @@ initial begin
 				"OutputKey10: %h \n", outputKey10,
 				"OutputKey11: %h \n", outputKey11,
 			  );
-				
-				
+
 	//inputKey = 128'h2b7e151628aed2a6abf7158809cf4f3c;
-	inputKey = 128'h5468617473206D79204B756E67204675;
+	//inputKey = 128'h3c4fcf098815f7aba6d2ae2816157e2b;
+	//inputKey = 128'h5468617473206D79204B756E67204675;
+	inputKey = 128'h754620676e754b20796d207374616854;
 	#10;
-	
+
 end
 endmodule
-
