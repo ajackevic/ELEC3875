@@ -1,19 +1,41 @@
-`timescale 1ns/100ps
 module sub_byte_tb;
 
-	reg  [127:0] subByteInput;
-	wire [127:0] subByteOutput;
+reg  [127:0] inputValue;
+reg  [127:0] expectedValue;
+wire [127:0] outputValue;
 
-	sub_byte dut(
-		.subByteInput	(subByteInput),
-		.subByteOutput	(subByteOutput)
-	);
-	
-	initial begin
-		$monitor("SubByte input: %h \n", subByteInput,
-					"subByte output: %h \n", subByteOutput,
+sub_byte dut(
+	.subByteInput	(inputValue),
+	.subByteOutput	(outputValue)
+);
+
+initial begin
+		expectedValue = 128'ha2c792a02baf939fcb302feb20abc063;
+end
+
+always @(*) begin
+
+	inputValue = 128'h1a3174470b1b226e59084e3c540e1f00;
+
+	if (outputValue != expectedValue) begin
+		$display("Fail \n \n",
+					"For the following inputs: \n",
+					"Input Value: %h \n \n", inputValue,
+					"Expected output: \n",
+					"Output Value: %h \n \n", expectedValue,
+					"Aquired output: \n",
+					"Output Value: %h \n", outputValue
 				  );
-		subByteInput = 128'h001f0e543c4e08596e221b0b4774311a;
-		#10;
 	end
+
+	if (outputValue == expectedValue) begin
+		$display("Pass \n \n",
+					"For the following inputs: \n",
+					"Input Value: %h \n \n", inputValue,
+					"Aquired output: \n",
+					"Output Value: %h \n \n", outputValue
+				  );
+	end
+
+end
 endmodule
