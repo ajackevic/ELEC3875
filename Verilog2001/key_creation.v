@@ -35,7 +35,7 @@ module key_creation #(
 	assign Rcon[6] = 32'h00000040;
 	assign Rcon[7] = 32'h00000080;
 	assign Rcon[8] = 32'h0000001b;
-	assign Rcon[9] = 32'h00000063;
+	assign Rcon[9] = 32'h00000036;
 
 	assign tempKeys[0] = roundKeyInput;
 
