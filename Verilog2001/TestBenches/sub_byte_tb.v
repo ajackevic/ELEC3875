@@ -1,21 +1,22 @@
-module sub_byte_tb;
+module shift_row_tb;
 
 reg  [127:0] inputValue;
 reg  [127:0] expectedValue;
 wire [127:0] outputValue;
 
-sub_byte dut(
-	.subByteInput	(inputValue),
-	.subByteOutput	(outputValue)
+shift_row dut(
+	.inputData(inputValue),
+	.outputData(outputValue)
 );
 
 initial begin
-		expectedValue = 128'ha2c792a02baf939fcb302feb20abc063;
+	expectedValue = 128'h2b30c0a0cbab929f20c793eba2af2f63;
 end
+
 
 always @(*) begin
 
-	inputValue = 128'h1a3174470b1b226e59084e3c540e1f00;
+	inputValue = 128'ha2c792a02baf939fcb302feb20abc063;
 
 	if (outputValue != expectedValue) begin
 		$display("Fail \n \n",
