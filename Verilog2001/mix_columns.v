@@ -69,7 +69,7 @@ always @(inputData) begin: mixColumns
 
 		i = i + 1;
 	end
-
+  
 	outputData = {row04[3], row03[3], row02[3], row01[3],
 					  row04[2], row03[2], row02[2], row01[2],
 					  row04[1], row03[1], row02[1], row01[1],

@@ -1,28 +1,21 @@
 `timescale 1ns/100ps
 module mix_columns_tb;
 
-reg [7:0] inputValue;
-reg [7:0] MSDValue;
-wire [10:0] outputValue;
-
+reg  [127:0] inputValue;
+wire [127:0] outputValue;
 
 mix_columns dut (
-	.inputValue	 (inputValue),
-	.MSDValue    (MSDValue),
-	.outputValue (outputValue)
+	.inputData	 (inputValue),
+	.outputData (outputValue)
 );
 
 initial begin
 	$monitor("InputValue: %h \n", inputValue,
-				"MSDValue: %h \n", MSDValue,
 				"OutputValue: %h \n", outputValue,
 			  );
-	inputValue = 8'h66;
-	MSDValue = 8'h0b;
+	inputValue = 128'h2b30c0a0cbab929f20c793eba2af2f63;
 	#10;
-	
-		
+
 end
-	
-	
+
 endmodule
