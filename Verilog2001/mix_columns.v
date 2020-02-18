@@ -33,7 +33,7 @@ end
 always @(inputData) begin: mixColumns
 	/*
 			  InputData			 MDS_matrix(encrypt)		  OutputData
-      [a00, a01, a02, a03]   [02, 03, 01 ,01]   [b00, b01, b02, b03]
+    [a00, a01, a02, a03]   [02, 03, 01 ,01]   [b00, b01, b02, b03]
 		[a10, a11, a12, a13] • [01, 02, 03, 01] =	[b10, b11, b12, b13]
 		[a20, a21, a22, a23]   [01, 01, 02, 03]   [b20, b21, b22, b23]
 		[a30, a31, a32, a33]   [03, 01, 01, 02]   [b30, b31, b32, b33]
@@ -69,7 +69,7 @@ always @(inputData) begin: mixColumns
 
 		i = i + 1;
 	end
-  
+
 	outputData = {row04[3], row03[3], row02[3], row01[3],
 					  row04[2], row03[2], row02[2], row01[2],
 					  row04[1], row03[1], row02[1], row01[1],
