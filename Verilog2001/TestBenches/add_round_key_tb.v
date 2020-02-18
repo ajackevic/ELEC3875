@@ -25,11 +25,11 @@ always @ (*) begin
 		$display("Fail \n \n",
 					"For the following inputs: \n",
 					"Input Key: %h \n", roundKey,
-					"Input data: %h \n \n", inputData,
+					"Input Value: %h \n \n", inputData,
 					"Expected output: \n",
-					"Output data: %h \n \n", expectedValue,
+					"Output Value: %h \n \n", expectedValue,
 					"Aquired output: \n",
-					"Output data: %h \n", outputData
+					"Output Value: %h \n", outputData
 				  );
 	end
 
@@ -37,9 +37,9 @@ always @ (*) begin
 		$display("Pass \n \n",
 					"For the following inputs: \n",
 					"Input Key: %h \n", roundKey,
-					"Input data: %h \n \n", inputData,
+					"Input Value: %h \n \n", inputData,
 					"Aquired output: \n",
-					"Output data: %h \n \n", outputData
+					"Output Value: %h \n \n", outputData
 				  );
 	end
 
