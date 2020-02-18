@@ -1,5 +1,5 @@
 module encryption #(
-	parameter numRounds = 4
+	parameter numRounds = 32
 )(
 	input [127:0] inputData,
 	input [127:0] key,
@@ -7,8 +7,19 @@ module encryption #(
 );
 
 	wire [127:0] roundKey [0:10];
-	wire [127:0] tempData [0:35];
+	wire [127:0] tempData [0:39];
+	wire [3:0] counter [0:32];
 
+
+	assign counter[0] = 1;
+	assign counter[4] = 2;
+	assign counter[8] = 3;
+	assign counter[12] = 4;
+	assign counter[16] = 5;
+	assign counter[20] = 6;
+	assign counter[24] = 7;
+	assign counter[28] = 8;
+	assign counter[32] = 9;
 
 key_creation keyGen(
 	.roundKeyInput		(key),
@@ -25,15 +36,21 @@ key_creation keyGen(
 	.roundKeyOutput11	(roundKey[10])
 );
 
-add_round_key roundInit(
+
+
+
+	//assign counter = 3'b001;
+	genvar currentValue;
+	generate
+
+	add_round_key AddRoundKeyInitRound(
 		.inputData 	 (inputData),
 		.roundKey	 (roundKey[0]),
 		.outputData  (tempData[0])
 	);
 
-	genvar currentValue;
-  
-	generate 	for (currentValue = 0; currentValue < numRounds; currentValue = currentValue + 5) begin : t
+	for (currentValue = 0; currentValue <= numRounds; currentValue = currentValue + 4) begin : t
+		//assign counter = counter + 1'b1;
 		sub_byte SubByte(
 			.subByteInput (tempData[currentValue]),
 			.subByteOutput (tempData[currentValue + 1])
@@ -51,17 +68,33 @@ add_round_key roundInit(
 
 		add_round_key AddRoundKey(
 			.inputData	(tempData[currentValue + 3]),
-			.roundKey   (roundKey[1]), // could use an array for this but thats effort
+			.roundKey   (roundKey[counter[currentValue]]),
 			.outputData (tempData[currentValue + 4])
 		);
 
 	end
+
+	sub_byte SubByteLastRound(
+		.subByteInput (tempData[36]),
+		.subByteOutput (tempData[37])
+	);
+
+	shift_row shiftRowLastRound(
+		.inputData	(tempData[37]),
+		.outputData (tempData[38])
+	);
+
+	add_round_key AddRoundKeyLastRound(
+		.inputData	(tempData[38]),
+		.roundKey   (roundKey[10]),
+		.outputData (tempData[39])
+	);
+
 	endgenerate
 
 
 	always @(tempData) begin
-		outputData = tempData[4];
+		outputData = tempData[39];
 	end
-
 
 endmodule
