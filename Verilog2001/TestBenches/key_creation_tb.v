@@ -1,7 +1,17 @@
-`timescale 1ns/100ps
 module key_creation_tb;
 
 reg  [127:0] inputKey;
+reg  [127:0] expectedValue1;
+reg  [127:0] expectedValue2;
+reg  [127:0] expectedValue3;
+reg  [127:0] expectedValue4;
+reg  [127:0] expectedValue5;
+reg  [127:0] expectedValue6;
+reg  [127:0] expectedValue7;
+reg  [127:0] expectedValue8;
+reg  [127:0] expectedValue9;
+reg  [127:0] expectedValue10;
+reg  [127:0] expectedValue11;
 wire [127:0] outputKey1;
 wire [127:0] outputKey2;
 wire [127:0] outputKey3;
@@ -30,26 +40,84 @@ key_creation dut(
 );
 
 initial begin
+	expectedValue1 = 128'h754620676e754b20796d207374616854;
+	expectedValue2 = 128'h93a279d6e6e459b188911291f1fc32e2;
+	expectedValue3 = 128'hfaf73aa0695543768fb11ac707200856;
+	expectedValue4 = 128'hfb1e03c301e9396368bc7a15e70d60d2;
+	expectedValue5 = 128'h5b495214a05751d7a1be68b4c90212a1;
+	expectedValue6 = 128'h699b42c632d210d292854105333b29b1;
+	expectedValue7 = 128'h4e0e2eac27956c6a15477cb887c23dbd;
+	expectedValue8 = 128'h6a31a8b2243f861e03aaea7416ed96cc;
+	expectedValue9 = 128'h6c4b9556067a3de42245bbfa21ef518e;
+	expectedValue10 = 128'hd8cbf1f7b48064a1b2fa594590bfe2bf;
+	expectedValue11 = 128'h266f313bfea4c0cc4a24a46df8defd28;
 
-	$monitor("%d ns \ input: %h \n", $time, inputKey,
-				"OutputKey1: %h \n", outputKey1,
-				"OutputKey2: %h \n", outputKey2,
-				"OutputKey3: %h \n", outputKey3,
-				"OutputKey4: %h \n", outputKey4,
-				"OutputKey5: %h \n", outputKey5,
-				"OutputKey6: %h \n", outputKey6,
-				"OutputKey7: %h \n", outputKey7,
-				"OutputKey8: %h \n", outputKey8,
-				"OutputKey9: %h \n", outputKey9,
-				"OutputKey10: %h \n", outputKey10,
-				"OutputKey11: %h \n", outputKey11,
-			  );
-
-	//inputKey = 128'h2b7e151628aed2a6abf7158809cf4f3c;
-	//inputKey = 128'h3c4fcf098815f7aba6d2ae2816157e2b;
-	//inputKey = 128'h5468617473206D79204B756E67204675;
 	inputKey = 128'h754620676e754b20796d207374616854;
-	#10;
+end
+
+always @(outputKey11) begin
+
+	if((outputKey1 != expectedValue1) | (outputKey2 != expectedValue2)   |
+		(outputKey3 != expectedValue3) | (outputKey4 != expectedValue4)   |
+		(outputKey5 != expectedValue5) | (outputKey6 != expectedValue6)   |
+		(outputKey7 != expectedValue7) | (outputKey8 != expectedValue8)   |
+		(outputKey9 != expectedValue9) | (outputKey10 != expectedValue10) |
+		(outputKey11 != expectedValue11)) begin
+
+		$display("Fail \n \n",
+					"For the following inputs: \n",
+					"Input Key: %h \n \n", inputKey,
+					"Expected output: \n",
+					"Output RoundKey 1: %h \n", expectedValue1,
+					"Output RoundKey 2: %h \n", expectedValue2,
+					"Output RoundKey 3: %h \n", expectedValue3,
+					"Output RoundKey 4: %h \n", expectedValue4,
+					"Output RoundKey 5: %h \n", expectedValue5,
+					"Output RoundKey 6: %h \n", expectedValue6,
+					"Output RoundKey 7: %h \n", expectedValue7,
+					"Output RoundKey 8: %h \n", expectedValue8,
+					"Output RoundKey 9: %h \n", expectedValue9,
+					"Output RoundKey 10: %h \n", expectedValue10,
+					"Output RoundKey 11: %h \n \n", expectedValue11,
+					"Aquired output: \n",
+					"Output RoundKey 1: %h \n", outputKey1,
+					"Output RoundKey 2: %h \n", outputKey2,
+					"Output RoundKey 3: %h \n", outputKey3,
+					"Output RoundKey 4: %h \n", outputKey4,
+					"Output RoundKey 5: %h \n", outputKey5,
+					"Output RoundKey 6: %h \n", outputKey6,
+					"Output RoundKey 7: %h \n", outputKey7,
+					"Output RoundKey 8: %h \n", outputKey8,
+					"Output RoundKey 9: %h \n", outputKey9,
+					"Output RoundKey 10: %h \n", outputKey10,
+					"Output RoundKey 11: %h \n \n", outputKey11,
+				  );
+	end
+
+	if((outputKey1 == expectedValue1) | (outputKey2 == expectedValue2)   |
+		(outputKey3 == expectedValue3) | (outputKey4 == expectedValue4)   |
+		(outputKey5 == expectedValue5) | (outputKey6 == expectedValue6)   |
+		(outputKey7 == expectedValue7) | (outputKey8 == expectedValue8)   |
+		(outputKey9 == expectedValue9) | (outputKey10 == expectedValue10) |
+		(outputKey11 == expectedValue11)) begin
+
+		$display("Pass \n \n",
+					"For the following inputs: \n",
+					"Input Key: %h \n \n", inputKey,
+					"Aquired output: \n",
+					"Output RoundKey 1: %h \n", outputKey1,
+					"Output RoundKey 2: %h \n", outputKey2,
+					"Output RoundKey 3: %h \n", outputKey3,
+					"Output RoundKey 4: %h \n", outputKey4,
+					"Output RoundKey 5: %h \n", outputKey5,
+					"Output RoundKey 6: %h \n", outputKey6,
+					"Output RoundKey 7: %h \n", outputKey7,
+					"Output RoundKey 8: %h \n", outputKey8,
+					"Output RoundKey 9: %h \n", outputKey9,
+					"Output RoundKey 10: %h \n", outputKey10,
+					"Output RoundKey 11: %h \n \n", outputKey11,
+				  );
+	end
 
 end
 endmodule

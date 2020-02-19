@@ -1,27 +1,29 @@
-module mix_columns_tb;
+module encryption_tb;
 
 reg  [127:0] inputValue;
+reg  [127:0] key;
 reg  [127:0] expectedValue;
 wire [127:0] outputValue;
 
-mix_columns dut (
-	.inputData	 (inputValue),
+encryption dut(
+	.inputData	(inputValue),
+	.key			(key),
 	.outputData (outputValue)
 );
 
 initial begin
-	expectedValue = 128'h5d7d401b0e068de8328da4847af475ba;
+	expectedValue = 128'h3ad7021ab3992240f62014575f50c329;
 end
 
-
 always @(*) begin
-
-	inputValue = 128'h2b30c0a0cbab929f20c793eba2af2f63;
+	inputValue = 128'h6F775420656e694e20656e4f206f7754;
+	key = 128'h754620676e754b20796d207374616854;
 
 	if (outputValue != expectedValue) begin
 		$display("Fail \n \n",
 					"For the following inputs: \n",
-					"Input Value: %h \n \n", inputValue,
+					"Input Value: %h \n", inputValue,
+					"Input Key: %h \n \n", key,
 					"Expected output: \n",
 					"Output Value: %h \n \n", expectedValue,
 					"Aquired output: \n",
@@ -32,7 +34,8 @@ always @(*) begin
 	if (outputValue == expectedValue) begin
 		$display("Pass \n \n",
 					"For the following inputs: \n",
-					"Input Value: %h \n \n", inputValue,
+					"Input Value: %h \n", inputValue,
+					"Input Key: %h \n \n", key,
 					"Aquired output: \n",
 					"Output Value: %h \n \n", outputValue
 				  );
