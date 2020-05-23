@@ -7,7 +7,7 @@ and designed in Verilog and then tested on an FPGA (Terasic DE1-SoC).
 
 ## Getting Started
 
-To run the AES appliction, download the  ajackevic/ELEC3875 
+To run the AES appliction, download the  ajackevic/ELEC3875
 repository and execute the GUI.mlapp on MATLAB (version 2013 onward).
 Once executed, one should see a window pop-up containing the AES application.
 
@@ -24,4 +24,4 @@ licenses.
 
 ## Acknowledgments
 
-Name: Noel, Dr. David Cowell, and a few sources
+I would like personally to thank my project supervisor, Dr. David Cowell, for his consistent support and guidance throughout the duration of the project. I am extremely gratefully for his patience and endurance throughout the course of the project. Additionally, I would like to extend my gratitude to my colleague and friend, Noel Julian for moral support, guidance and overall insight.

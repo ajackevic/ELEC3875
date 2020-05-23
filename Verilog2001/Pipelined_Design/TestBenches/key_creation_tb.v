@@ -1,3 +1,4 @@
+/*
 module key_creation_tb;
 
 reg  [127:0] inputKey;
@@ -39,7 +40,7 @@ key_creation dut(
 	.roundKeyOutput11	(outputKey11)
 );
 
-initial begin
+initial begin 
 	expectedValue1 = 128'h754620676e754b20796d207374616854;
 	expectedValue2 = 128'h93a279d6e6e459b188911291f1fc32e2;
 	expectedValue3 = 128'hfaf73aa0695543768fb11ac707200856;
@@ -51,19 +52,19 @@ initial begin
 	expectedValue9 = 128'h6c4b9556067a3de42245bbfa21ef518e;
 	expectedValue10 = 128'hd8cbf1f7b48064a1b2fa594590bfe2bf;
 	expectedValue11 = 128'h266f313bfea4c0cc4a24a46df8defd28;
-
+	
 	inputKey = 128'h754620676e754b20796d207374616854;
 end
 
-always @(outputKey11) begin
-
+always @(outputKey11) begin 
+	
 	if((outputKey1 != expectedValue1) | (outputKey2 != expectedValue2)   |
 		(outputKey3 != expectedValue3) | (outputKey4 != expectedValue4)   |
 		(outputKey5 != expectedValue5) | (outputKey6 != expectedValue6)   |
 		(outputKey7 != expectedValue7) | (outputKey8 != expectedValue8)   |
 		(outputKey9 != expectedValue9) | (outputKey10 != expectedValue10) |
-		(outputKey11 != expectedValue11)) begin
-
+		(outputKey11 != expectedValue11)) begin 
+		
 		$display("Fail \n \n",
 					"For the following inputs: \n",
 					"Input Key: %h \n \n", inputKey,
@@ -93,14 +94,14 @@ always @(outputKey11) begin
 					"Output RoundKey 11: %h \n \n", outputKey11,
 				  );
 	end
-
+	
 	if((outputKey1 == expectedValue1) | (outputKey2 == expectedValue2)   |
 		(outputKey3 == expectedValue3) | (outputKey4 == expectedValue4)   |
 		(outputKey5 == expectedValue5) | (outputKey6 == expectedValue6)   |
 		(outputKey7 == expectedValue7) | (outputKey8 == expectedValue8)   |
 		(outputKey9 == expectedValue9) | (outputKey10 == expectedValue10) |
-		(outputKey11 == expectedValue11)) begin
-
+		(outputKey11 == expectedValue11)) begin 
+		
 		$display("Pass \n \n",
 					"For the following inputs: \n",
 					"Input Key: %h \n \n", inputKey,
@@ -118,6 +119,135 @@ always @(outputKey11) begin
 					"Output RoundKey 11: %h \n \n", outputKey11,
 				  );
 	end
-
+	
 end
 endmodule
+*/
+
+/*
+module mix_columns_tb;
+
+reg  [127:0] inputValue;
+reg  [127:0] expectedValue;
+wire [127:0] outputValue;
+
+
+mix_columns #(
+	// Set 1 for encryption and 0 for decryption
+	.ENCRYPT		(0)	
+	) dut(
+	.inputData	(inputValue),
+	.outputData (outputValue)
+);
+
+initial begin 
+	// For encryption 
+	//expectedValue = 128'h5d7d401b0e068de8328da4847af475ba;
+	// For decryption
+	expectedValue = 128'h2b30c0a0cbab929f20c793eba2af2f63;
+end
+	
+
+always @(*) begin 
+
+	// For encryption
+	//inputValue = 128'h2b30c0a0cbab929f20c793eba2af2f63;
+	// For decryption 
+	inputValue = 128'h5d7d401b0e068de8328da4847af475ba;
+	
+	if (outputValue != expectedValue) begin
+		$display("Fail \n \n",
+					"For the following inputs: \n",
+					"Input Value: %h \n \n", inputValue,
+					"Expected output: \n",
+					"Output Value: %h \n \n", expectedValue,
+					"Aquired output: \n",
+					"Output Value: %h \n", outputValue
+				  );
+	end
+	
+	if (outputValue == expectedValue) begin
+		$display("Pass \n \n",
+					"For the following inputs: \n",
+					"Input Value: %h \n \n", inputValue,
+					"Aquired output: \n",
+					"Output Value: %h \n \n", outputValue
+				  );
+	end
+	
+end
+endmodule
+*/
+
+`timescale 1ns / 100ps
+
+module key_creation_tb;
+
+
+reg clock50MHz;
+reg startTransition;
+reg  [127:0] inputKey;
+wire [127:0] outputKey1;
+wire [127:0] outputKey2;
+wire [127:0] outputKey3;
+wire [127:0] outputKey4;
+wire [127:0] outputKey5;
+wire [127:0] outputKey6;
+wire [127:0] outputKey7;
+wire [127:0] outputKey8;
+wire [127:0] outputKey9;
+wire [127:0] outputKey10;
+wire [127:0] outputKey11;
+
+
+key_creation dut(
+	.clock				(clock50MHz),
+	.startTransition	(startTransition),
+	.roundKeyInput		(inputKey),
+	.roundKeyOutput1	(outputKey1),
+	.roundKeyOutput2	(outputKey2),
+	.roundKeyOutput3	(outputKey3),
+	.roundKeyOutput4	(outputKey4),
+	.roundKeyOutput5	(outputKey5),
+	.roundKeyOutput6	(outputKey6),
+	.roundKeyOutput7	(outputKey7),
+	.roundKeyOutput8	(outputKey8),
+	.roundKeyOutput9	(outputKey9),
+	.roundKeyOutput10	(outputKey10),
+	.roundKeyOutput11	(outputKey11)
+);
+
+localparam NUM_CYCLES = 1000;
+localparam CLOCK_FREQ = 50000000;
+
+real HALF_CLOCK_PERIOD = (1000000000.0 / $itor(CLOCK_FREQ)) / 2.0;
+
+integer half_cycle = 0;	
+
+
+initial begin
+	inputKey = 128'h754620676e754b20796d207374616854;
+	startTransition = 0;
+	clock50MHz = 0;
+end
+
+initial begin
+  repeat(500) @ (posedge clock50MHz);  
+  startTransition = 1;
+  repeat(5) @ (posedge clock50MHz); 
+  startTransition = 0;
+end
+
+
+always begin
+	#(HALF_CLOCK_PERIOD);
+	clock50MHz = ~clock50MHz;
+	half_cycle = half_cycle + 1;
+	
+	if (half_cycle == (2 * NUM_CYCLES)) begin		
+		$stop;
+	end
+end
+endmodule
+
+
