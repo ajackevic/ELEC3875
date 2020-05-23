@@ -4,11 +4,11 @@
 
 module top_level_encryption(
 	// Input of the base system clock, connected to Terasic 50MHz clock.
-	input clock50MHz,		
+	input clock50MHz,
 	// Listed ports below is utilised by data comms for the receiving and transmitting of data.
-	input TXE,				
-	input RXF,				
-	output WR,
+	input TXE,
+	input RXF,
+	output WR, 
 	output RD,
 
 	inout bit1,
@@ -92,7 +92,7 @@ data_communication readAndWriteData(
 	.RXF									(RXF),				 // Pin connection passed down from top
 	.WR									(WR),					 // Pin connection passed down from top
 	.RD									(RD),					 // Pin connection passed down from top
-	
+
 	.dataToSendFlag					(sendDataFlag),			 			// Input to data comms
 	.dataOut128Bits					(UARTDataOut),				 			// Input to data comms
 	.nextDataBlockFlag				(nextDataBlockFlag),					// Input to data comms
