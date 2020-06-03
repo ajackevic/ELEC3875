@@ -9,7 +9,7 @@ module s_box(
 
 always @ (sboxInput) begin
 		case(sboxInput)
-			8'h00 : sboxOutput = 8'h63; 
+			8'h00 : sboxOutput = 8'h63;
 			8'h01 : sboxOutput = 8'h7c;
 			8'h02 : sboxOutput = 8'h77;
 			8'h03 : sboxOutput = 8'h7b;

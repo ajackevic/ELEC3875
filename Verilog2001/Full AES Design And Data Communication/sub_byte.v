@@ -8,26 +8,25 @@ module sub_byte(
 	output [127:0] subByteOutput
 );
 
-// This instantiate 16 SBox modules. This purley so that all 16 bytes 
+// This instantiate 16 SBox modules. This purley so that all 16 bytes
 // can be substituted in parallel, thus saving time.
 genvar twoBytes;
 generate for(twoBytes = 0; twoBytes < 128; twoBytes = twoBytes + 8) begin: subByte
 	s_box subValue(
-		.inputValue			(subByteInput[twoBytes +:8]),
-		.startTransition	(startTransition),
-		.outputValue			(subByteOutput[twoBytes +:8])
+		.sboxInput			(subByteInput[twoBytes +:8]),
+		.sboxOutput			(subByteOutput[twoBytes +:8])
 	);
 end
 endgenerate
 
 endmodule
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
 
 
 
@@ -47,7 +46,7 @@ endmodule
 
 
 /*
-	if(startTransition == 1) begin 
+	if(startTransition == 1) begin
 		for(twoBytes = 0; twoBytes < 128; twoBytes = twoBytes + 8) begin
 			subValueInput = subByteInput[twoBytes +:8];
 			callModule = 1;
@@ -65,6 +64,5 @@ end
 
 
 
-	
-*/
 
+*/

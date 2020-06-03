@@ -1,6 +1,6 @@
-// This is AES KeyCreation module. On the postative edge of startTransition the 
+// This is AES KeyCreation module. On the postative edge of startTransition the
 // module will create 11 round keys. Due to roundKey1 equaling roundKeyInput, and
-// the duration of two clock cyles per roundKey, with IDLE taken into consideration 
+// the duration of two clock cyles per roundKey, with IDLE taken into consideration
 // it will take 21 clock cycles to complet all the roundKeys.
 
 module key_creation #(
@@ -9,7 +9,7 @@ module key_creation #(
 	input clock,
 	input startTransition,
 	input [127:0] roundKeyInput,
-	
+
 	output reg [127:0] roundKeyOutput1,
 	output reg [127:0] roundKeyOutput2,
 	output reg [127:0] roundKeyOutput3,
@@ -50,8 +50,8 @@ reg [3:0] IDLE			  		 	  = 4'd0;
 reg [3:0] START_CREATE_ROUNDKEY = 4'd1;
 reg [3:0] STOP_CREATE_ROUNDKEY  = 4'd2;
 reg [3:0] STOP					     = 4'd3;
-	
-initial begin 
+
+initial begin
 	// Set Rcon values to their corresponding values and
 	// all the other variables to an initial value of 0.
 	Rcon[0] = 32'h00000001;
@@ -64,12 +64,12 @@ initial begin
 	Rcon[7] = 32'h00000080;
 	Rcon[8] = 32'h0000001b;
 	Rcon[9] = 32'h00000036;
-	
+
 	roundCounter = 4'd0;
 	shiftedRow = 32'd0;
 	sboxSubCol = 32'd0;
 	state = 4'd0;
-	
+
 	roundKeyOutput1  = 128'd0;
 	roundKeyOutput2  = 128'd0;
 	roundKeyOutput3  = 128'd0;
@@ -81,7 +81,7 @@ initial begin
 	roundKeyOutput9  = 128'd0;
 	roundKeyOutput10 = 128'd0;
 	roundKeyOutput11 = 128'd0;
-	
+
 	tempKeys[0]  = 128'd0;
 	tempKeys[1]  = 128'd0;
 	tempKeys[2]  = 128'd0;
@@ -97,29 +97,29 @@ end
 
 // Instantiating 4 sBox modules.
 s_box value1(
-	.inputValue	(sBoxValue1Input),
-	.outputValue	(sBoxValue1Output)
+	.sboxInput	(sBoxValue1Input),
+	.sboxOutput	(sBoxValue1Output)
 );
 
 s_box value2(
-	.inputValue	(sBoxValue2Input),
-	.outputValue	(sBoxValue2Output)
+	.sboxInput	(sBoxValue2Input),
+	.sboxOutput	(sBoxValue2Output)
 );
 
 s_box value3(
-	.inputValue	(sBoxValue3Input),
-	.outputValue	(sBoxValue3Output)
+	.sboxInput	(sBoxValue3Input),
+	.sboxOutput	(sBoxValue3Output)
 );
 
 s_box value4(
-	.inputValue	(sBoxValue4Input),
-	.outputValue	(sBoxValue4Output)
+	.sboxInput	(sBoxValue4Input),
+	.sboxOutput	(sBoxValue4Output)
 );
 
 
 always @(posedge clock) begin
 	case(state)
-	
+
 	IDLE: begin
 	// The state waits till startTransition is equal to 1 before loading the inputs
 	// and transitioning to START_CREATE_ROUNDKEY state.
@@ -129,7 +129,7 @@ always @(posedge clock) begin
 			state = START_CREATE_ROUNDKEY;
 		end
 	end
-	
+
 	START_CREATE_ROUNDKEY: begin
 	// First column (96:127) is cyclically shifted and substituted with sBox values.
 	// State is transitioned to STOP_CREATE_ROUNDKEY state at the posetive edge of clock.
@@ -140,27 +140,27 @@ always @(posedge clock) begin
 		sBoxValue4Input = shiftedRow[31:24];
 		state = STOP_CREATE_ROUNDKEY;
 	end
-	
+
 	STOP_CREATE_ROUNDKEY: begin
 	// The substituted value is XOR'd with the corresponding Rcon value, then the remaining
-	// tempKey values are XOR'd with the previous created column value. 
+	// tempKey values are XOR'd with the previous created column value.
 		sboxSubCol[7:0]   = sBoxValue1Output;
 		sboxSubCol[15:8]  = sBoxValue2Output;
 		sboxSubCol[23:16] = sBoxValue3Output;
-		sboxSubCol[31:24] = sBoxValue4Output;	
-		
+		sboxSubCol[31:24] = sBoxValue4Output;
+
 		col3out = sboxSubCol ^ tempKeys[roundCounter][31:0] ^ Rcon[roundCounter];
 		col2out = col3out ^ tempKeys[roundCounter][63:32];
 		col1out = col2out ^ tempKeys[roundCounter][95:64];
 		col0out = col1out ^ tempKeys[roundCounter][127:96];
-		
+
 		// Attach all the created columns to create the current tempKey.
 		tempKeys[roundCounter+1] = {col0out, col1out, col2out, col3out};
 		roundCounter = roundCounter + 4'd1;
 
 		// Transfer the tempKey values to the output roundKeys. The transfer of data has been
-		// moved from the STOP state to this one, so that the creation of the keys could be 
-		// done in parallel to the encryption process, as the duration of a key created is 
+		// moved from the STOP state to this one, so that the creation of the keys could be
+		// done in parallel to the encryption process, as the duration of a key created is
 		// faster than the duration between one AddRoundKey and the next.
 		roundKeyOutput2 = tempKeys[1];
 		roundKeyOutput3 = tempKeys[2];
@@ -172,16 +172,16 @@ always @(posedge clock) begin
 		roundKeyOutput9 = tempKeys[8];
 		roundKeyOutput10 = tempKeys[9];
 		roundKeyOutput11 = tempKeys[10];
-		
-		// If the amounf of created roundKeys is less than 10, repeat the next corresponding 
+
+		// If the amounf of created roundKeys is less than 10, repeat the next corresponding
 		// key, else transition to the STOP state.
 		if(roundCounter <= 4'd9) begin
 			state = START_CREATE_ROUNDKEY;
-		end else begin 
+		end else begin
 			state = STOP;
 		end
 	end
-	
+
 	STOP: begin
 	// Clear any stored values, then transition to the IDLE state on the posative edge of clock.
 		roundCounter = 4'd0;
@@ -189,12 +189,11 @@ always @(posedge clock) begin
 		sboxSubCol = 32'd0;
 		state = IDLE;
 	end
-	
+
 	default: begin
 		state = IDLE;
 	end
-	
+
 	endcase
 end
 endmodule
-
